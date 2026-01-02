@@ -1,0 +1,31 @@
+#
+# @file packages/wifi-mdns.yaml
+# @brief Common WiFi and mDNS configuration package
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-01
+#
+
+wifi:
+  id: n_main
+  reboot_timeout: 0s
+  fast_connect: true
+  min_auth_mode: WPA  
+  power_save_mode: ${pwr_mode}
+  output_power: ${pwr_val}
+  networks:
+    - ssid: !secret wifi1_ssid
+      password: !secret wifi1_password
+    - ssid: !secret wifi2_ssid
+      password: !secret wifi2_password      
+  manual_ip:
+    # Set this to the IP of the ESP
+    static_ip: ${ip_0}
+    # Set this to the IP address of the router. Often ends with .1
+    gateway: 192.168.0.1
+    # The subnet of the network. 255.255.255.0 works for most home networks.
+    subnet: 255.255.255.0    
+    dns1: 1.1.1.1        # Cloudflare DNS 
+    dns2: 8.8.8.8        # Cloudflare DNS 
+      
+mdns:
+  disabled: false

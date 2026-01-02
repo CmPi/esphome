@@ -1,7 +1,7 @@
 #
 # @file rd-1.yaml
 # @brief Specific Device Configuration
-# @author CmPi <cmpi@webe.fr>
+# @author CmPi <github.com/CmPi>
 #
 
 substitutions:
@@ -15,22 +15,11 @@ substitutions:
     pwr_val: 20dB
     detected_flash_size: 16MB
     room: desk
+    ws2812_led_gpio: GPIO48  # used by rgb_led package
 
 <<: !include models/rd.yaml  
   
-   
-
-
-
-
-
-
-
-
-
-
-
-
+# https://www.aliexpress.com/item/1005009554059578.html
 # SOC: ESP32-S3 (QFN56) (revision v0.20)
 # https://www.espressif.com/en/products/socs/esp32-s3
 # PSRAM: 8MB (AP Memory 3.3 V)

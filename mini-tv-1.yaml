@@ -1,7 +1,7 @@
 #
 # @file mini-tv.yaml
 # @brief Specific Device Configuration
-# @author CmPi <cmpi@webe.fr>
+# @author CmPi <github.com/CmPi>
 #
 
 substitutions:
@@ -9,7 +9,7 @@ substitutions:
     device_fn: "ESP32-TV (TFT)"
     device_lc: "5b6ca0"
     soc_type: "ESP32-C3"
-    config_version: "0.1.357"
+    config_version: "0.2.002"
     ip_0: 192.168.0.230
     pwr_mode: LIGHT
     pwr_val: 20dB

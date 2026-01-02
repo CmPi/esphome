@@ -1,0 +1,9 @@
+#
+# @file mini-tv.yaml
+# @brief Specific Device Configuration
+# @author CmPi <github.com/CmPi>
+#
+
+substitutions:
+    device_model: "cam"
+    

@@ -1,13 +1,48 @@
+#
+# @file models/rd.yaml
+# @brief Device configuration for "Room Device"
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-01
+#
+
 esphome:
   project:
     name: "CmPi.MyEhThings"
     version: $config_version
   area: "${room}"
-  name: "$device_lc"
+  name: "rd-${device_lc}"
   friendly_name: "$device_fn"
+  platformio_options:
+    board_build.flash_mode: dio
+    board_build.flash_size: ${detected_flash_size}
 
 esp32:
+  board: esp32-s3-devkitm-1
   variant: $soc_type
   flash_size: ${detected_flash_size}
   framework:
     type: esp-idf
+    sdkconfig_options:
+      CONFIG_ESP32S3_SPIRAM_SUPPORT: y
+      CONFIG_SPIRAM: y
+      CONFIG_SPIRAM_MODE_OCT: y
+      CONFIG_SPIRAM_SPEED_80M: y
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+packages:
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include ../packages/sys-info.yaml    
+
+light:
+  - platform: esp32_rmt_led_strip
+    id: l_rgb
+    rgb_order: GRB
+    pin: GPIO48       # Change this to your WS2812 data pin
+    num_leds: 1       # Number of LEDs in your strip
+    chipset: WS2812
+    name: "LED RGB"
+

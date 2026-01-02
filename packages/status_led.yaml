@@ -1,0 +1,53 @@
+##
+# @file status_led.yaml
+# @brief Package to manage a status LED
+# @author CmPi <cmpi@webe.fr>
+#
+
+output:
+  - platform: gpio
+    pin:
+      number: ${status_led_gpio}
+    id: o_led   
+
+button:
+  - platform: template
+    name: "Blink 3 times Status LED"
+    id: b_status_led_blinkx3
+    on_press:
+      - script.execute: status_led_blinkx3    
+
+light:
+  - id: l_led
+    platform: binary
+    name: "Internal LED"
+    output: o_led
+    icon: "mdi:led-on"
+    internal: true
+    restore_mode: ALWAYS_OFF
+
+switch:
+  - platform: template
+    id: s_status
+    name: "LED Status"
+    icon: mdi:led-on
+    restore_mode: RESTORE_DEFAULT_OFF
+    turn_on_action:
+      - light.turn_on: l_led
+    turn_off_action:
+      - light.turn_off: l_led
+    lambda: |-
+      return id(l_led).current_values.is_on();
+
+script:
+  # Make the status LED blink 3 times.
+  - id: status_led_blinkx3
+    mode: restart  # Restart if triggered while already running
+    then:
+      - repeat:
+          count: 3
+          then:
+            - light.turn_on: l_led
+            - delay: 100ms
+            - light.turn_off: l_led
+            - delay: 150ms           

@@ -1,0 +1,109 @@
+#
+# @file sys-info.yaml
+# @brief package defining optional sensors for dev/debug stage - useless in prod
+# @author CmPi <cmpi@webe.fr>
+#
+
+substitutions:
+  sysinfo_update_interval: "24h"
+
+esphome:
+  includes:
+    - src/sysinfo.h
+    - src/sysinfo.cpp
+
+button:
+  - id: b_restart
+    platform: restart
+    name: "Reboot"
+    entity_category: diagnostic
+    icon: mdi:restart
+    disabled_by_default: false
+
+sensor:
+  - platform: template
+    name: "My Flash Size (JDEC)"
+    id: advanced_flash_size_mb
+    icon: "mdi:chip"
+    unit_of_measurement: "MB"
+    accuracy_decimals: 2
+    entity_category: diagnostic
+    lambda: |-
+      return esphome::sysinfo::SysInfoComponent::get_jdec_flash_size_mb();
+    update_interval: ${sysinfo_update_interval}
+  - platform: template
+    name: "My Flash Size"
+    id: flash_size_mb
+    icon: "mdi:chip"
+    unit_of_measurement: "MB"
+    accuracy_decimals: 2
+    entity_category: diagnostic
+    lambda: |-
+      return esphome::sysinfo::SysInfoComponent::get_flash_size_mb();
+    update_interval: ${sysinfo_update_interval}
+  - platform: template
+    name: "My Flash Speed"
+    id: flash_speed
+    icon: "mdi:speedometer"
+    unit_of_measurement: "MHz"
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    lambda: |-
+      return (float)esphome::sysinfo::SysInfoComponent::get_flash_chip_speed();
+    update_interval: ${sysinfo_update_interval}
+  # === CPU Information
+  # --- Frequency
+  - id: cpu_freq
+    platform: template
+    name: "My CPU Frequency"
+    icon: "mdi:cpu-32-bit"
+    unit_of_measurement: "MHz"
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    lambda: |-
+      return (float)esphome::sysinfo::SysInfoComponent::get_cpu_freq_mhz();
+    update_interval: ${sysinfo_update_interval}
+  # --- Cores
+  - id: cpu_cores
+    platform: template
+    name: "My CPU Cores"
+    icon: "mdi:chip"
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    lambda: |-
+      return (float)esphome::sysinfo::SysInfoComponent::get_cpu_cores();
+    update_interval: ${sysinfo_update_interval}
+  # reports CPU Temperature (ESP32 only)
+  - id: cpu_temp
+    platform: internal_temperature
+    name: "CPU Temperature"
+    update_interval: 600s
+    entity_category: "diagnostic"
+
+# Chip Information
+text_sensor:
+  - platform: template
+    name: "My Chip Model"
+    id: chip_model
+    icon: "mdi:chip"
+    lambda: |-
+      return esphome::sysinfo::SysInfoComponent::get_chip_model();
+    update_interval: ${sysinfo_update_interval}
+    entity_category: diagnostic
+  - platform: template
+    name: "My Chip Revision"
+    id: chip_revision
+    icon: "mdi:numeric"
+    lambda: |-
+      char buffer[20];
+      snprintf(buffer, sizeof(buffer), "%u", 
+               esphome::sysinfo::SysInfoComponent::get_chip_revision());
+      return std::string(buffer);
+    update_interval: ${sysinfo_update_interval}
+    entity_category: diagnostic
+  - platform: version
+    id: esphome_version
+    name: "ESPHome"
+    hide_timestamp: true
+#   update_interval: ${sysinfo_update_interval}
+    entity_category: diagnostic

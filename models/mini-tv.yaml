@@ -1,10 +1,19 @@
+#
+# @file models/mini-tv.yaml
+# @brief Device configuration for Mini TV
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-01
+#
+
 esphome:
   project:
     name: "CmPi.MyEhThings"
     version: $config_version
   area: "${room}"
-  name: "$device_lc"
+  name: "mini-tv-${device_lc}"
   friendly_name: "$device_fn"
+  platformio_options:
+    board_build.flash_size: ${detected_flash_size}
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -12,3 +21,7 @@ esp32:
   flash_size: ${detected_flash_size}
   framework:
     type: esp-idf
+
+packages:
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    

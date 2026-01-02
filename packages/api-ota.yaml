@@ -1,0 +1,15 @@
+#
+# @file packages/api-ota.yaml
+# @brief Common API and OTA configuration package
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-01
+#
+
+api:
+  encryption:
+    key: !secret api_key
+  reboot_timeout: 0s  # Prevents "unavailable" status    
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
