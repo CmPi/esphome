@@ -13,9 +13,6 @@ substitutions:
     ip_0: 192.168.0.230
     pwr_mode: LIGHT
     pwr_val: 20dB
-    webe_api: !secret webe_api
-    webe_usrm: !secret webe_usrm    
-    webe_key: !secret webe_key
     detected_flash_size: 4MB
     room: salon
     # display

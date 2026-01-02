@@ -1,0 +1,14 @@
+esphome:
+  project:
+    name: "CmPi.MyEhThings"
+    version: $config_version
+  area: "${room}"
+  name: "$device_lc"
+  friendly_name: "$device_fn"
+
+esp32:
+  board: esp32-c3-devkitm-1
+  variant: esp32c3
+  flash_size: ${detected_flash_size}
+  framework:
+    type: esp-idf
