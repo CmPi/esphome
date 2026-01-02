@@ -1,0 +1,70 @@
+#
+# @file models/cam.yaml
+# @brief Device configuration for Mini TV
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_model: "cam"
+  soc_type: "ESP32"
+  pwr_mode: NONE
+  pwr_val: 20dB
+  detected_flash_size: 4MB
+  config_version: "0.1.002"
+
+esp32:
+  board: esp32cam
+  framework:
+    type: arduino
+  flash_size: ${detected_flash_size}
+
+packages:
+  - !include ../packages/esphome.dio.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include ../packages/sys-info.yaml  
+
+psram:
+  mode: quad
+  speed: 80MHz
+
+esp32_camera:
+  id: cam_${device_sn}
+  name: "ESP32 CAM Photo"
+  external_clock:
+    pin: GPIO0
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO26
+    scl: GPIO27  
+  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
+  vsync_pin: GPIO25
+  href_pin: GPIO23
+  pixel_clock_pin: GPIO22
+  power_down_pin: GPIO32
+  # Qualité et résolution
+  max_framerate: 15 fps
+  resolution: 800x600
+  jpeg_quality: 10  # 10 = qualité max, 63 = qualité min    
+
+output:
+  - platform: gpio
+    pin: GPIO4
+    id: flash_led
+
+light:
+  - platform: binary
+    output: flash_led
+    name: "Flash LED ESP32-CAM"
+
+button:
+  - platform: template
+    name: "Prendre photo ESP32-CAM"
+    on_press:
+      - homeassistant.service:
+          service: camera.snapshot
+          data:
+            entity_id: camera.cam_${device_sn}
+            filename: "/config/www/snapshots/esp32cam_{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
+

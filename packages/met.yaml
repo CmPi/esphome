@@ -1,0 +1,237 @@
+
+
+
+
+binary_sensor:
+  # button to enter in a page or to select an option 
+  - id: bs_select
+    platform: gpio
+    pin:
+      number: ${bs_select_gpio}
+    name: "SELECT"
+    internal: true
+    on_press:
+      then:
+        - lambda: |-
+            #ifdef USE_BACKLIGHT
+            // Optional Select Button specific behavior on home page
+            if (id(g_bl))
+                if (!id(bl_on)) {
+                  id(turn_on_backlight).execute();
+                  return;
+                } else 
+                // off
+                if (id(g_page) == 0) {  // If not home page   
+                  // turn off backlight and stop further processing
+                  id(turn_off_backlight).execute();
+                  return;
+                }
+            #endif
+            if (!id(in_menu)) {
+              id(in_menu) = true;
+              id(g_option) = 0;
+            } else {
+              if (id(g_page)==1) { // living room
+                if (id(g_option)==0) id(p1_o1).execute();
+                if (id(g_option)==1) id(p1_o2).execute();
+                if (id(g_option)==2) id(p1_o3).execute();
+              }
+              else if (id(g_page)==2) { // desk
+                if (id(g_option)==0) id(p2_o1).execute();
+                if (id(g_option)==1) id(p2_o2).execute();
+                if (id(g_option)==2) id(p2_o3).execute();
+              }
+              else if (id(g_page)==3) { // kitchen
+                if (id(g_option)==0) id(p3_o1).execute();
+                if (id(g_option)==1) id(p3_o2).execute();
+                if (id(g_option)==2) id(p3_o3).execute();
+              }
+              else if (id(g_page)==4) { // bedroom
+                if (id(g_option)==0) id(p4_o1).execute();
+                if (id(g_option)==1) id(p4_o2).execute();
+                if (id(g_option)==2) id(p4_o3).execute();
+              }
+              id(in_menu) = false;
+              id(g_option) = -1;
+            }
+        - script.execute: refresh_screen   # ⭐ non-blocking
+  # button to change of page or change of option      
+  - id: bs_next
+    platform: gpio
+    pin:
+      number: ${bs_next_gpio}
+    name: "NEXT"
+    internal: true
+    on_press:
+      then:
+        - lambda: |-
+            #ifdef USE_BACKLIGHT
+            // If backlight supported and currently off, turn it on and stop further processing
+            if (id(g_bl) && !id(bl_on)) {
+              id(turn_on_backlight).execute();
+              return;
+            }
+            #endif
+            if (!id(in_menu)) id(g_page) = (id(g_page) + 1) % 6;
+            else id(g_option) = (id(g_option) + 1) % 4;  // now cycle through 4 options (including Exit)
+        - script.execute: refresh_screen   # ⭐ non-blocking
+
+sensor:
+  - platform: homeassistant
+    id: tx3_temp
+    entity_id: sensor.tx3_01_temperature
+    internal: true  
+
+  - platform: homeassistant
+    id: tx3_lr_t
+    entity_id: sensor.tx3_09_temperature
+    internal: true  
+  - platform: homeassistant
+    id: tx3_lr_h
+    entity_id: sensor.tx3_09_humidite
+    internal: true  
+
+  - platform: homeassistant
+    id: tx3_br_t
+    entity_id: sensor.tx3_02_temperature
+    internal: true  
+  - platform: homeassistant
+    id: tx3_br_h
+    entity_id: sensor.tx3_02_humidite
+    internal: true  
+  - platform: homeassistant
+    id: tx3_k_t
+    entity_id: sensor.tx3_07_temperature
+    internal: true  
+
+display:
+  - id: !extend d_main
+    lambda: |-
+      met.init( it, false, id(esp_time) );
+      if (id(g_ota_pb)>=0) {
+        drawProgressPage( it, id(f_small_16), "OTA Update...", id(g_ota_pb) );
+        return;
+      }    
+      const char* titles[6] = { "Home", "Living Room", "Desk / Homelab", "Kitchen", "Main bedroom", "About..." };
+      met.drawPageTitle( it, id(f_small_16), titles[id(g_page)],id(in_menu),id(g_page)>0 );
+
+      if (id(g_page) == 0) {
+          // Draw time and date using DSEG fonts
+          drawTimeAndDate(it, id(f_time), id(f_date), id(esp_time));
+          
+          // Draw weather icon(s) and moon phase (day: centered, night: split left/right)
+          drawWeatherAndMoon(it, id(font_weather), id(f_micro_8), id(ha_weather_condition), id(moon_phase_icon), id(esp_time));
+
+          // Draw weather information boxes
+          drawBottomBoxes( it,  
+                           id(f_mini_12),  
+                           id(f_icons), 
+                           isnan(id(ha_weather_temperature).state) ? 0 : id(ha_weather_temperature).state, 
+                           isnan(id(ha_weather_humidity).state) ? 0 : id(ha_weather_humidity).state, 
+                           isnan(id(ha_weather_pression).state) ? 0 : id(ha_weather_pression).state 
+                           );
+
+      }  else {
+        // ---- PAGES 2–5 ----
+
+      if (id(g_page)==1) { // living room
+        met.drawOptionsPage( it, id(f_small_16), id(g_option), id(st_p1_o1), id(st_p1_o2), id(st_p1_o3) );
+        drawBottomBoxes( it,  
+                           id(f_mini_12),  
+                           id(f_icons), 
+                           isnan(id(tx3_lr_t).state) ? 0 : id(tx3_lr_t).state, 
+                           isnan(id(tx3_lr_h).state) ? 0 : id(tx3_lr_h).state, 0 );
+      }
+      
+      if (id(g_page)==2) { // desk
+        met.drawOptionsPage( it, id(f_small_16), id(g_option), id(st_p2_o1), id(st_p2_o2) );
+          drawBottomBoxes( it,  
+                           id(f_mini_12),  
+                           id(f_icons), 
+                           37.9, 
+                           65.5, 
+                           0 
+                           );
+      }
+      
+      if (id(g_page)==3) { // kitchen
+        met.drawOptionsPage( it, id(f_small_16), id(g_option), id(st_p3_o1), id(st_p3_o2) );
+          drawBottomBoxes( it,  
+                           id(f_mini_12),  
+                           id(f_icons), 
+                           isnan(id(tx3_k_t).state) ? 0 : id(tx3_k_t).state, 
+                           0, 
+                           0 
+                           );
+      }
+      if (id(g_page)==4) { // bedroom
+          drawBottomBoxes( it,  
+                           id(f_small_16),  
+                           id(f_icons), 
+                           isnan(id(tx3_br_t).state) ? 0 : id(tx3_br_t).state, 
+                           isnan(id(tx3_br_h).state) ? 0 : id(tx3_br_h).state, 
+                           0 
+                           );
+      }
+      if (id(g_page)==5) {
+        menuDrawAboutPage(it,id(f_mini_12),false);
+      }
+      }
+
+# --- FONTS -------------------------------------------------------
+
+font:
+  - id: f_micro_8
+    file: "fonts/spleen-5x8.bdf"
+    glyphs: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789[]/:~-°.%, "
+  - id: f_mini_12
+    file: "fonts/spleen-6x12.bdf"
+    glyphs: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789[]/:~-°.%, "
+  - id: f_small_16
+    file: "fonts/spleen-8x16.bdf"
+    glyphs: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/:~-°.%, "
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+    on_begin:
+      then:
+        - lambda: |-
+            if (id(g_bl)) {
+              id(last_interaction) = millis();
+              if (!id(bl_on) ) {
+                backlight_on_for_ota(true);
+                id(bl_on) = true;
+              }
+            }
+        - if:
+            condition:
+              lambda: |-
+                return id(g_bl);
+            then:
+              - script.execute: turn_on_backlight
+        - globals.set:
+            id: g_ota_pb
+            value: '0.0'
+    on_progress:
+      then:
+        - lambda: |-
+            id(g_ota_pb) = x;  // x is the progress percentage (0-100)
+            id(last_interaction) = millis();
+        - component.update:
+            id: d_main
+    on_end:
+      then:
+        - globals.set:
+            id: g_ota_pb
+            value: '-1'
+        - lambda: |-
+            id(g_ota_pb) = 100;  // x is the progress percentage (0-100)
+            id(last_interaction) = millis();
+        - component.update:
+            id: d_main
+    on_error:
+      then:
+        - globals.set:
+            id: g_ota_pb
+            value: '-1'

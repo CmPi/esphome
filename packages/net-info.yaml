@@ -1,0 +1,45 @@
+#
+# @file net-info.yaml
+# @brief package defining optional sensors for dev/debug stage - useless in prod
+# @author CmPi <github.com/CmPi>
+#
+
+sensor:
+  # Received Signal Strength Indicator (RSSI)
+  - id: rssi
+    platform: wifi_signal
+    name: "RSSI"
+    icon: "mdi:wifi"
+    update_interval: 600s
+    entity_category: "diagnostic"
+    filters: 
+      - lambda: |-
+          // Ignore impossible RSSI values
+          if (x > -10 || x < -100) {
+            return NAN;
+          }
+          return x;
+
+text_sensor:
+  # SSID
+  - platform: wifi_info
+    ssid:
+      name: "SSID"
+      id: ssid
+      update_interval: 60s
+  # MAC Address
+  - platform: wifi_info
+    mac_address:
+      name: "Mac"
+      id: mac
+  # IP Address
+  - platform: wifi_info
+    ip_address:
+      name: "IP"
+      id: ip  
+      update_interval: 600s          
+
+script:
+  - id: report_rssi
+    then: 
+      - !include { file: ../keys/script.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }

@@ -1,0 +1,91 @@
+#
+# @file .device.esp32-c3.mini.yaml
+# @brief common part of a TTGO
+# @author CmPi <github.com/CmPi>
+#
+
+esphome:
+  project:
+    name: "CmPi.MyEhThings"
+    version: $config_version
+  area: "${room}"
+  platformio_options:
+    board_build.flash_mode: dio
+    board_build.flash_size: ${detected_flash_size}
+    build_flags:
+      - -DUSE_BACKLIGHT    
+  includes:
+    - src/met.cpp
+    - src/met.h
+
+esp32:
+  board: esp32dev
+  flash_size: ${detected_flash_size}
+  framework:
+    type: esp-idf
+
+packages:
+  - !include ../packages/esphome.dio.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include ../packages/met.yaml
+  - !include ../packages/webe.yaml
+  - !include ../packages/display.menu.yaml
+  - !include ../packages/display.date-time.yaml
+  - !include ../packages/display.back-light.yaml
+  - !include ../packages/weather.yaml
+  - !include ../packages/min-info.yaml
+  - !include ../packages/sys-info.yaml
+
+binary_sensor:
+  - id: !extend bs_select
+    pin:
+      number: GPIO00
+      mode: INPUT_PULLUP
+      inverted: true
+  - id: !extend bs_next
+    pin:
+      number: GPIO35
+      mode: INPUT  # GPIO35 n’a pas de pull-up interne
+      inverted: true
+
+# --- ST7789 TFT Display (TTGO T-Display V1.1 240x135) ---
+spi:
+  id: spi_bus
+  clk_pin: GPIO18
+  mosi_pin: GPIO19
+
+display:
+  - id: d_main
+    platform: st7789v
+    model: TTGO_TDISPLAY_135X240
+    cs_pin: GPIO5
+    dc_pin: GPIO16
+    reset_pin: GPIO23
+    rotation: ${rotation}
+    backlight_pin: no # handled by backlight package
+    spi_id: spi_bus
+    update_interval: 1s
+
+sensor:
+  - platform: adc
+    pin: 34
+    attenuation: 12db
+    name: VBatt
+    id: vcc
+    update_interval: 60s
+  - platform: template
+    name: batterylevel
+    id: batterylevel
+    unit_of_measurement: '%'
+    update_interval: 60s
+    lambda: |-
+      // I know infering the battery from voltage only is misleading, but I'll take it. Considering linear decay (again, i'll take it), max=2.23, min=1.38
+      return ((id(vcc).state * 118) - 162);
+
+# Enable logging
+logger:
+  <<: !include ../keys/logger.error.yaml   
+
+mdns:
+  disabled: true    

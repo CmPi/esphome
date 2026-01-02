@@ -2,22 +2,17 @@
 # @file rd-1.yaml
 # @brief Specific Device Configuration
 # @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
 #
 
 substitutions:
-    device_model: "rd"
     device_fn: "Room Device 1"
     device_lc: "759954"
-    soc_type: "ESP32S3"
-    config_version: "0.1.002"
     ip_0: 192.168.0.235
-    pwr_mode: NONE
-    pwr_val: 20dB
-    detected_flash_size: 16MB
-    room: desk
-    ws2812_led_gpio: GPIO48  # used by rgb_led package
+    room: chambre
 
-<<: !include models/rd.yaml  
+packages:
+  - !include models/rd.yaml
   
 # https://www.aliexpress.com/item/1005009554059578.html
 # SOC: ESP32-S3 (QFN56) (revision v0.20)

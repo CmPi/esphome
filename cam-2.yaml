@@ -1,0 +1,29 @@
+#
+# @file cam-2.yaml
+# @brief Specific Device Configuration
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+    device_fn: "CAM JBOND"
+    device_sn: "jbond"
+    device_lc: "8a310c"
+    ip_0: 192.168.0.149
+    room: desk
+
+packages:
+  - !include models/cam.yaml
+
+# jbond	A0:A3:B3:8A:31:0C	192.168.0.149	89.177.17.190	
+
+# a0:a3:b3:8a:31:0c
+
+# Chip is ESP32-D0WD-V3 (revision v3.1)
+# Features: Wi-Fi, BT, Dual Core + LP Core, 240MHz, Vref calibration in eFuse, Coding Scheme None
+# Crystal is 40MHz
+# MAC: a0a3b38a310c
+# Manufacturer: 85
+# Device: 2016
+# Status value: 0x0200
+# Detected flash size: 4MB

@@ -1,7 +1,7 @@
 ##
 # @file status_led.yaml
 # @brief Package to manage a status LED
-# @author CmPi <cmpi@webe.fr>
+# @author CmPi <github.com/CmPi>
 #
 
 output:

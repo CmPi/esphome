@@ -2,19 +2,17 @@
 # @file models/rd.yaml
 # @brief Device configuration for "Room Device"
 # @author CmPi <github.com/CmPi>
-# @date creation 2026-01-01
+# @date creation 2026-01-02
 #
 
-esphome:
-  project:
-    name: "CmPi.MyEhThings"
-    version: $config_version
-  area: "${room}"
-  name: "rd-${device_lc}"
-  friendly_name: "$device_fn"
-  platformio_options:
-    board_build.flash_mode: dio
-    board_build.flash_size: ${detected_flash_size}
+substitutions:
+    device_model: "rd"
+    soc_type: "ESP32S3"
+    config_version: "0.1.002"
+    pwr_mode: NONE
+    pwr_val: 20dB
+    detected_flash_size: 16MB
+    ws2812_led_gpio: GPIO48  # used by rgb_led package
 
 esp32:
   board: esp32-s3-devkitm-1
@@ -33,6 +31,7 @@ psram:
   speed: 80MHz
 
 packages:
+  - !include ../packages/esphome.dio.yaml
   - !include ../packages/wifi-mdns.yaml
   - !include ../packages/api-ota.yaml    
   - !include ../packages/sys-info.yaml    

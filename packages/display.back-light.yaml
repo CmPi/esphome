@@ -1,0 +1,156 @@
+#
+# @file display.back-light.yaml
+# @brief Functions required to control display back light
+# @author CmPi <github.com/CmPi>
+#
+
+esphome:
+  on_boot:
+    - priority: -100
+      then:
+        # Start backlight monitoring
+        - lambda: |-
+            id(last_interaction) = millis();
+        - if:
+            condition:
+              lambda: 'return id(g_bl);'
+            then:
+              - script.execute:
+                  id: turn_on_backlight
+
+globals:
+  # backlight brightness level (0-100)
+  - id: bl_brightness  
+    type: int
+    initial_value: '80'
+    restore_value: false
+
+output:
+  # ===== ADD OUTPUT FOR BACKLIGHT WITH PWM =====
+  # For TTGO-32 with backlight pin 4:
+  - platform: ledc
+    pin: GPIO4
+    id: o_bl
+    frequency: 1000
+    inverted: false
+
+light:
+  # Create a light component for easy brightness control
+  - id: l_bl
+    platform: monochromatic
+    output: o_bl
+    name: "Display Backlight"
+    restore_mode: ALWAYS_ON
+    default_transition_length: 300ms
+    internal: true
+
+script:
+  # NEW: Turn on backlight with PWM
+  - id: !extend turn_on_backlight
+    mode: restart
+    then:
+      - if:
+          condition:
+            lambda: 'return id(g_bl);'  # Only if backlight supported
+          then:
+            - light.turn_on:
+                id: l_bl
+                brightness: !lambda 'return id(bl_brightness) / 100.0;'
+            - globals.set:
+                id: bl_on
+                value: 'true'
+            - globals.set:
+                id: last_interaction
+                value: !lambda 'return millis();'
+  # NEW: Turn off backlight with smooth fade
+  - id: !extend turn_off_backlight
+    mode: single
+    then:
+      - if:
+          condition:
+            lambda: 'return id(g_bl);'  # Only if backlight supported
+          then:
+            - light.turn_off:
+                id: l_bl
+            - globals.set:
+                id: bl_on
+                value: 'false'                
+            - globals.set:
+                id: g_page
+                value: '0'                
+            - globals.set:
+                id: g_option
+                value: '-1'                
+  # NEW: Increase backlight brightness
+  - id: brightness_up
+    mode: single
+    then:
+      - lambda: |-
+          if (id(g_bl) && id(bl_on)) {
+            id(bl_brightness) = min(100, id(bl_brightness) + 10);
+            auto call = id(l_bl).turn_on();
+            call.set_brightness(id(bl_brightness) / 100.0);
+            call.perform();
+            id(last_interaction) = millis();
+          }
+  # NEW: Decrease backlight brightness
+  - id: brightness_down
+    mode: single
+    then:
+      - lambda: |-
+          if (id(g_bl) && id(bl_on)) {
+            id(bl_brightness) = max(10, id(bl_brightness) - 10);
+            auto call = id(l_bl).turn_on();
+            call.set_brightness(id(bl_brightness) / 100.0);
+            call.perform();
+            id(last_interaction) = millis();
+          }
+  # NEW: Check backlight timeout and return to home
+  - id: check_backlight_timeout
+    mode: restart
+    then:
+      - while:
+          condition:
+            lambda: 'return id(g_bl);'  # Only run if backlight supported
+          then:
+            - delay: 1s
+            - lambda: |-
+                if (id(bl_on)) {
+                  unsigned long now = millis();
+                  unsigned long idle_time = now - id(last_interaction);
+                  // Turn off after 60 seconds (60000 ms)
+                  if (idle_time > 60000) {
+                    id(turn_off_backlight).execute();
+                    // Return to home page
+                    id(g_page) = 0;
+                    id(in_menu) = false;
+                    id(g_option) = -1;
+                    id(log_mode) = false;
+                    id(refresh_screen).execute();
+                  }
+                }         
+
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          if (id(g_bl) && id(bl_on)) {
+            unsigned long now = millis();
+            unsigned long idle_time = now - id(last_interaction);
+            if (idle_time > 300000) {
+              id(turn_off_backlight).execute();
+              id(g_page) = 0;
+              id(in_menu) = false;
+              id(g_option) = -1;
+              id(log_mode) = false;
+              id(refresh_screen).execute();
+            }
+          }
+
+button:
+  - platform: template
+    name: "Switch ON backlight"
+    id: b_turn_on_backlight
+    on_press:
+      - script.execute: turn_on_backlight                 
+

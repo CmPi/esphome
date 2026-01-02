@@ -1,0 +1,6 @@
+bluetooth_proxy:
+  active: true
+  cache_services: false  # Change from true to save memory
+  connection_slots: 1  # Reduce from 3 to 1 (or disable if not needed)
+  connections:
+    - {}

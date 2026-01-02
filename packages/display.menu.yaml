@@ -1,0 +1,161 @@
+#
+# @file webe.yaml
+# @brief Functions required to interact with www.webe.fr website
+# @author CmPi <github.com/CmPi>
+#
+
+globals:
+  # displayed page number
+  - id: g_page
+    type: int
+    initial_value: '0'
+  # selected option inside the page  
+  - id: g_option
+    type: int
+    initial_value: '-1'
+  # indicate if "in the page"
+  - id: in_menu
+    type: bool
+    initial_value: 'false'
+  # indicates if the back light may be controlled for this display
+  - id: g_bl
+    type: bool
+    initial_value: '${bl_supported}'
+  # backlight staus (when controllable) - is it switched on ?
+  - id: bl_on
+    type: bool
+    initial_value: 'true'
+    restore_value: false    
+  # Track last user interaction
+  - id: last_interaction
+    type: unsigned long
+    initial_value: '0'
+    restore_value: false  
+  - id: log_mode  # NEW: for About page log/info toggle
+    type: bool
+    initial_value: 'false'
+    restore_value: false    
+  - id: g_ota_pb
+    type: float
+    initial_value: '-1'
+    restore_value: false  
+
+
+binary_sensor:
+  - id: bs_p2_o1
+    platform: homeassistant
+    entity_id: switch.b4472f_relay
+  - id: bs_p2_o2
+    platform: homeassistant
+    entity_id: switch.1bf2f6_relay
+
+sensor:
+  # Living room
+  - id: st_p1_o1
+    name: "TV and Home Cinema"
+    platform: template
+    lambda: |-
+      return id(bs_p2_o1).state ? 1 : 0;
+    internal: true
+  - id: st_p1_o2
+    name: "TV Lights"
+    platform: template
+    lambda: |-
+      return id(bs_p2_o2).state ? 1 : 0;
+    internal: true
+  - id: st_p1_o3
+    name: "Both"
+    platform: template
+    lambda: |-
+      return -1;
+    internal: true
+  # Desk  
+  - id: st_p2_o1
+    name: "Black lamp on"
+    platform: template
+    lambda: |-
+      return 1;
+  - id: st_p2_o2
+    name: "White lamp off"
+    platform: template
+    lambda: |-
+      return 0;
+  # Kitchen
+  - id: st_p3_o1
+    name: "Kettle"
+    platform: template
+    lambda: |-
+      return 1;
+  - id: st_p3_o2
+    name: "Rice cooker"
+    platform: template
+    lambda: |-
+      return 1;
+  # Bedroom
+  - id: st_p4_o1
+    name: "lamp 1"
+    platform: template
+    lambda: |-
+      return 0;
+  - id: st_p4_o2
+    name: "lamp 2"
+    platform: template
+    lambda: |-
+      return 0;
+
+script:
+  - id: p1_o1
+    then: 
+    - delay: 1ms
+  - id: p1_o2
+    then: 
+    - delay: 1ms
+  - id: p1_o3
+    then: 
+    - delay: 1ms
+  - id: p2_o1
+    then: 
+      - homeassistant.service:
+          service: switch.toggle
+          data:
+            entity_id: switch.b4472f_relay
+  - id: p2_o2
+    then: 
+      - homeassistant.service:
+          service: switch.toggle
+          data:
+            entity_id: switch.1bf2f6_relay
+  - id: p2_o3
+    then: 
+    - script.execute: p2_o1
+    - script.execute: p2_o2
+  - id: p3_o1
+    then: 
+    - delay: 1ms
+  - id: p3_o2
+    then: 
+    - delay: 1ms
+  - id: p3_o3
+    then: 
+    - delay: 1ms
+  - id: p4_o1
+    then: 
+    - delay: 1ms
+  - id: p4_o2
+    then: 
+    - delay: 1ms
+  - id: p4_o3
+    then: 
+    - delay: 1ms
+  - id: turn_on_backlight
+    then: 
+    - delay: 1ms
+  - id: turn_off_backlight
+    then: 
+    - delay: 1ms
+  - id: refresh_screen
+    mode: restart
+    then:
+      - component.update: d_main    
+
+

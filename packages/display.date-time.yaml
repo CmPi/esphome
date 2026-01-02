@@ -1,0 +1,20 @@
+#
+# @file webe.yaml
+# @brief Used to display date and time on a display
+# @author CmPi <github.com/CmPi>
+#
+
+time:
+  - platform: sntp
+    id: esp_time
+
+font:
+  - id: f_time
+    file: "fonts/DSEG14Classic-Bold.ttf"
+    size: 22
+    glyphs: "0123456789:~"
+  - id: f_date
+    file: "fonts/DSEG14Classic-Regular.ttf"
+    size: 12
+    glyphs: "0123456789/~"
+

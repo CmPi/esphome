@@ -1,7 +1,7 @@
 /**
  *  @file sysinfo.h
  *  @brief package defining optional sensors for dev/debug stage - useless in prod
- *  @author CmPi <cmpi@webe.fr>
+ *  @author CmPi <github.com/CmPi>
  */
 
 #pragma once

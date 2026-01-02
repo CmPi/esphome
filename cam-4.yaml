@@ -1,0 +1,31 @@
+#
+# @file cam-4.yaml
+# @brief Specific Device Configuration
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+    device_fn: "CAM RMALO"
+    device_sn: "rmalo"
+    device_lc: "ba91ec"
+    ip_0: 192.168.0.155
+    room: desk
+
+packages:
+  - !include models/cam.yaml
+
+# CAM-1 Cuisine
+# CAM-2 Coin chargeurs
+# CAM-3 TV
+# CAM-4 Bureau
+#
+
+# Chip is ESP32-D0WDQ6-V3 (revision v3.1)
+# Features: Wi-Fi, BT, Dual Core + LP Core, 240MHz, Vref calibration in eFuse, Coding Scheme None
+# Crystal is 40MHz
+# MAC: 34987aba91ec
+# Manufacturer: 68
+# Device: 4016
+# Status value: 0x400200
+#Detected flash size: 4MB

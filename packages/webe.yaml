@@ -1,0 +1,78 @@
+#
+# @file webe.yaml
+# @brief Functions required to report data to a website
+# @author CmPi <github.com/CmPi>
+#
+
+globals:
+  - id: http_rsp_body
+    type: std::string
+    restore_value: no
+
+http_request:
+  id: req
+  useragent: ESPHome
+  verify_ssl: false
+  # ESP-IDF specifific options:
+# buffer_size_rx: 256  # Reduce from 512
+# buffer_size_tx: 256  # Reduce from 512  
+
+script:
+  - id: device_start
+    mode: queued
+    then:
+      - delay: 1ms
+      - script.execute: declare_device 
+  - id: declare_device
+    mode: single
+    then:
+      - delay: 10ms
+      - http_request.post:
+          url: "${webe_api}"
+          request_headers:
+            Content-Type: application/json
+          json: |-
+            root["cmd"] = "device";
+            root["fm"] = "${device_lc}";
+            root["type"] = "${device_type}";
+            root["name"] = "${device_fn}";
+            root["wifi"]["ip"] = "0.0.0.0";
+            // --- Conditional Wi-Fi Information ---
+              #if defined(USE_ESP8266)
+                // ESP8266 is more forgiving and uses standard Arduino definitions
+                root["wifi"]["mac"] = WiFi.macAddress().c_str();
+                if (id(n_main).is_connected()) {
+                  root["wifi"]["ip"] = WiFi.localIP().toString().c_str();
+                } else {
+                  root["wifi"]["ip"] = "0.0.0.0";
+                }
+              #elif defined(USE_ESP32)
+                // --- ESP32/ESP-IDF FIXES ---
+                // 1. MAC address: Use ESPHome native function
+                root["wifi"]["mac"] = esphome::get_mac_address().c_str(); 
+
+                if (id(n_main).is_connected()) {
+                  auto ips = id(n_main).get_ip_addresses();
+                  if (!ips.empty()) {
+                    root["wifi"]["ip"] = ips[0].str().c_str();
+                  } else {
+                    root["wifi"]["ip"] = "0.0.0.0";
+                  }
+                }
+              #endif          
+            root["versions"]["config"] = "${config_version}";
+            root["app"] = "ESPHome";
+            root["usrm"] = "${webe_usrm}";
+            root["key"] = "${webe_key}";
+          capture_response: false
+  - id: declare_config
+    then:
+      - delay: 1ms
+  - id: report_uptime
+    mode: queued
+    then:
+      - !include { file: ../keys/script.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+  - id: process_json
+    then:
+    - delay: 1ms
+    mode: single     

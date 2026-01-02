@@ -1,0 +1,21 @@
+
+
+script:
+  - id: device_start
+    then:
+      - delay: 1ms
+      - script.execute: declare_device 
+  - id: declare_device
+    then:
+      - delay: 1ms
+  - id: declare_config
+    then:
+      - delay: 1ms
+  - id: report_uptime
+    then:
+    - delay: 1ms
+  - id: process_json
+    then:
+    - delay: 1ms
+    mode: single     
+

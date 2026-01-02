@@ -1,0 +1,96 @@
+
+
+
+
+
+
+
+sensor:
+
+  - platform: homeassistant
+    id: ha_weather_temperature
+    entity_id: sensor.my_weather_temperature
+    internal: true
+  - platform: homeassistant
+    id: ha_weather_humidity
+    entity_id: sensor.my_weather_humidity
+    internal: true
+  - platform: homeassistant
+    id: ha_weather_pression
+    entity_id: sensor.my_weather_pression
+    internal: true
+
+font:
+  - file: "fonts/WeatherIcons.ttf"
+    id: f_icons
+    size: 13    
+    glyphs:
+      - "\uf055" # TEMPERATURE
+      - "\uf07a" # HUMIDITY
+      - "\uf079" # PRESSION
+      - "\uf078" # PRECIPITATION
+  - file : "fonts/SymbolsNerdFont-Regular.ttf"    
+    id: font_weather
+    size: 24    
+    glyphs:
+      # CHAR       HA CONDITION    DAY/NIGHT CHAR NAME IN FONT (see Symbols Nerd Font https://www.nerdfonts.com/font-downloads)
+      - "\ue30d" # sunny                     clear-day
+      - "\ue32b" # clear-night     NIGHT     weather-night_clear
+      # partly cloudy
+      - "\ue302" # partlycloudy              weather-day_cloudy
+      # cloudy
+      - "\ue312" # cloudy                    weather-cloudy
+      - "\ue32e" #                           weather-night_cloudy
+      # fog
+      - "\ue313" # fog                       weather-fog
+      # rain
+      - "\ue308" # rain                      weather-day_rain
+      # snow
+      - "\ue31a" # snow            ANY       weather-snow
+      - "\ue30a" # snow-day        DAY       weather-day_snow
+      - "\ue335" # snow-night      NIGHT     weather-night_snow
+      # windy
+      - "\ue31e" # windy           ANY       weather-windy
+      - "\ue37d" # windy           DAY       weather-day_windy
+      # shower rain
+      - "\ue309" # showerrain      DAY       weather-day_shower_rain
+      - "\ue334" # showerrain      NIGHT     weather-night_shower_rain
+      # thunderstorm
+      - "\uf141" # unavailable               fa-ellipsis_h
+      - "\ue374" # N/A
+      # moon phases
+      - "\uf0dc"
+      - "\uf0dd"
+      - "\uf0de"
+      - "\uf0df"
+      - "\uf0e0"
+      - "\uf0e1"
+      - "\uf0e2"
+      - "\uf0e3"
+
+text_sensor:
+  - platform: homeassistant
+    id: ha_weather_condition
+    entity_id: sensor.my_home_weather_condition
+    internal: true
+  - platform: homeassistant
+    id: ha_moon_phase
+    entity_id: sensor.my_moon_phase
+    internal: true
+  - platform: homeassistant
+    id: ha_sunrise
+    entity_id: sensor.my_sun_next_rising
+    internal: true
+  - platform: homeassistant
+    id: ha_sunset
+    entity_id: sensor.my_sun_next_setting
+    internal: true  
+  - platform: template
+    id: moon_phase_icon
+    lambda: |-
+      if (!id(esp_time).now().is_valid()) return std::string("\uf0dc");
+      int day = id(esp_time).now().day_of_month % 8;
+      const char* phases[8] = { "\uf0dc", "\uf0dd", "\uf0de", "\uf0df",
+                                "\uf0e0", "\uf0e1", "\uf0e2", "\uf0e3" };
+      return std::string(phases[day]);    
+

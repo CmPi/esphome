@@ -1,0 +1,17 @@
+http_request.post:
+  url: ${webe_api}
+  request_headers:
+    Content-Type: application/json
+  json: |-
+    root["cmd"] = "state";
+    root["fm"] = "${device_lc}";
+    root["value"] = id(${sSensorId}).state;
+    root["sensor"] = "${sSensorId}";
+    root["domain"] = "${sSensorDomain}";
+    root["api_id"] = id(${sSensorId}).get_object_id();
+    root["app"] = "ESPHome";
+    root["usrm"] = "${webe_usrm}";
+    root["key"] = "${webe_key}";
+  on_response:
+    then:
+      - script.execute: process_json

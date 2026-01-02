@@ -1,0 +1,88 @@
+#
+# @file ttgo32-1.yaml
+# @brief Specific Device Configuration
+# @author CmPi <github.com/CmPi>
+#
+
+substitutions:
+    device_model: "ttgo32"
+    device_fn: "TTGO-32-SENSORS (TFT)"
+    device_sn: "ttgo32-1"
+    device_lc: "0cc2c8"
+    full_mac: "3C:61:05:0C:C2:C8"
+    device_type: "TTGO-32"
+    config_version: "0.5.002"
+    ip_0: 192.168.0.39
+    pwr_mode: NONE
+    pwr_val: 18dB
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+    detected_flash_size: 4MB
+    room: cuisine
+    # display
+    bw_only: false
+    bl_supported: 'true'
+    rotation: 270
+    # pages and menus
+    bs_select_gpio: GPIO00
+    bs_next_gpio: GPIO35
+
+<<: !include models/ttgo32.yaml  
+
+external_components:
+  - source: github://CmPi/myEhThings
+    components: [ max30205 ]
+    refresh: 0s
+
+i2c:
+  id: i2c0
+  sda: GPIO21
+  scl: GPIO22
+  scan: true   
+
+sensor:
+  - id: s_max30205_raw
+    platform: max30205
+    name: "MAX30205"
+    update_interval: 10s    
+    address: 0x4C
+    internal: true
+    filters:
+      - delta: 0.2       # éviter les micro-variations
+      - throttle: 60s    # réduire la fréquence    
+  - platform: template
+    id: room_temperature
+    name: "Room Temperature"
+    unit_of_measurement: "°C"
+    accuracy_decimals: 1
+    lambda: |-
+      return id(s_max30205_raw).state;
+    filters:
+      - sliding_window_moving_average:
+          window_size: 12        # 6 mesures × 10s = 1 minute
+          send_every: 12         # publier uniquement toutes les 6
+      - round: 1
+  - id: gy30
+    platform: bh1750
+    name: "Illuminance"
+    update_interval: 59s
+    address: 0x23
+    icon: "mdi:light"
+    filters:
+      - or:
+        - throttle: 600s
+        - delta: 5
+
+# screen - many sensors
+
+# ESPRESSIF TOOL
+
+# Chip is ESP32-D0WDQ6-V3 (revision v3.0)
+# Features: Wi-Fi, BT, Dual Core + LP Core, 240MHz, Vref calibration in eFuse, Coding Scheme None
+# Crystal is 40MHz
+# MAC: 3c61050cc2c8
+# Manufacturer: 68
+# Device: 4016
+# Status value: 0x0200
+# Detected flash size: 4MB

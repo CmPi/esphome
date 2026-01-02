@@ -1,0 +1,20 @@
+
+
+
+binary_sensor:
+  - platform: status
+    name: "Status"
+
+sensor:
+  - id: ontime
+    platform: uptime
+    name: "uptime"  
+    icon: "mdi:timer"
+    update_interval: 900s    
+    entity_category: "diagnostic"
+    on_value:
+      if:
+        condition:
+          wifi.connected
+        then:  
+          - script.execute: report_uptime

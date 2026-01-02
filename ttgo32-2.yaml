@@ -1,0 +1,86 @@
+#
+# @file ttgo32-2.yaml
+# @brief Specific Device Configuration
+# @author CmPi <github.com/CmPi>
+#
+
+substitutions:
+    device_model: "ttgo32"
+    device_fn: "TTGO-32-NAKED (TFT)"
+    device_sn: "ttgo32-2"
+    device_lc: "88ed10"
+    full_mac: "78:21:84:88:ed:10"
+    device_type: "TTGO-32"
+    config_version: "0.2.002"
+    ip_0: 192.168.0.45 
+    pwr_mode: NONE
+    pwr_val: 18dB
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+    detected_flash_size: 4MB
+    room: chambre
+    # display
+    bw_only: false
+    bl_supported: 'true'
+    rotation: 90
+    # pages and menus
+    bs_select_gpio: GPIO00
+    bs_next_gpio: GPIO35
+
+<<: !include models/ttgo32.yaml   
+
+# Optional: Battery voltage sensor (if battery monitoring is connected)
+sensor:
+  # --- AHT2x Temperature & Humidity ---
+  - platform: aht10
+    address: 0x38
+#   variant: AHT20
+    temperature:
+      id: aht_temperature
+      name: "Temperature"
+      device_class: temperature
+      state_class: measurement
+      unit_of_measurement: "°C"
+      accuracy_decimals: 1
+      icon: "mdi:thermometer"
+    humidity:
+      id: aht_humidity
+      name: "Humidity"
+      device_class: humidity
+      state_class: measurement
+      unit_of_measurement: "%"
+      accuracy_decimals: 1
+      icon: "mdi:water-percent"
+    update_interval: 30s
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# screen - no senssor yet
+
+# ESPRESSIF TOOL
+
+# Chip is ESP32-D0WDQ6-V3 (revision v3.0)
+# Features: Wi-Fi, BT, Dual Core + LP Core, 240MHz, Vref calibration in eFuse, Coding Scheme None
+# Crystal is 40MHz
+# MAC: 78218488ed10
+# Manufacturer: ef
+# Device: 4018
+# Status value: 0x600200
+# Detected flash size: 16MB

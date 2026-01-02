@@ -1,0 +1,16 @@
+#
+# @file esphome.yaml
+# @brief Common ESPHome configuration for all devices
+# @author CmPi <github.com/CmPi>
+#
+
+esphome:
+  project:
+    name: "CmPi.MyEhThings"
+    version: $config_version
+  area: "${room}"
+  name: "${device_model}-${device_lc}"
+  friendly_name: "$device_fn"
+  platformio_options:
+    board_build.flash_mode: dio
+    board_build.flash_size: ${detected_flash_size}
