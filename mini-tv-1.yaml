@@ -5,6 +5,7 @@
 #
 
 substitutions:
+    device_model: "mini-tv"
     device_fn: "ESP32-TV (TFT)"
     device_lc: "5b6ca0"
     soc_type: "ESP32-C3"
@@ -26,7 +27,9 @@ substitutions:
     # status LED GPIO (required by package/status_led.yaml)
     status_led_gpio: GPIO11 
 
-<<: !include .device.esp32-mini-tv.yaml  
+<<: !include models/mini-tv.yaml  
+
+
 
 # Chip is ESP32-C3 (QFN32) (revision v0.4)
 # Features: Wi-Fi, BT 5 (LE), Single Core, 160MHz
