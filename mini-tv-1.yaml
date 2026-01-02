@@ -1,0 +1,58 @@
+#
+# @file mini-tv.yaml
+# @brief Specific Device Configuration
+# @author CmPi <cmpi@webe.fr>
+#
+
+substitutions:
+    device_fn: "ESP32-TV (TFT)"
+    device_lc: "5b6ca0"
+    soc_type: "ESP32-C3"
+    config_version: "0.1.357"
+    ip_0: 192.168.0.230
+    pwr_mode: LIGHT
+    pwr_val: 20dB
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+    detected_flash_size: 4MB
+    room: salon
+    # display
+    bw_only: false
+    bl_supported: 'false'
+    # pages and menus
+    bs_select_gpio: GPIO09
+    bs_next_gpio: GPIO10
+    # status LED GPIO (required by package/status_led.yaml)
+    status_led_gpio: GPIO11 
+
+<<: !include .device.esp32-mini-tv.yaml  
+
+# Chip is ESP32-C3 (QFN32) (revision v0.4)
+# Features: Wi-Fi, BT 5 (LE), Single Core, 160MHz
+# Crystal is 40MHz
+# MAC: b43a455b6ca0
+# Manufacturer: ef
+# Device: 4018
+# Status value: 0x600200
+# Detected flash size: 16MB
+
+# IOO - LCD_DC
+# IO1 - 
+# IO2 - LCD_CS
+# IO3 - LCD_SCK
+# IO4 - LCD_MOSI
+# IO5 - LCD_RST
+# IO6
+# IO7
+# IO8  - BUTTON TOP RIGHT
+# IO9  - BUTTON BOTTOM LEFT
+# IO10 - BUTTON BOTTOM RIGHT
+# IO11 - RED LED
+# IO
+# IO18 - USB
+# IO19 - USB
+# IO20 - RXD
+# IO21 - TXD
+
+
