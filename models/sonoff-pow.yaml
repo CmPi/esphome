@@ -1,5 +1,5 @@
 #
-# @file models/ttgo32.yaml
+# @file models/sonoff-pow.yaml
 # @brief common part of a TTGO
 # @author CmPi <github.com/CmPi>
 # @date creation 2026-01-02
@@ -7,6 +7,7 @@
 
 substitutions:
   device_type: "pow"
+  board: esp01_1m
   soc_type: "ESP8266"
   config_version: "0.2.002"
   pwr_mode: NONE
@@ -16,26 +17,13 @@ substitutions:
   webe_key: !secret webe_key
   status_led_gpio: GPIO15  # used by status_led package
 
-esphome:
-  <<: !include .def.esphome.common.yaml
-  platformio_options:
-    board_build.ldscript: eagle.flash.1m.ld
-    build_flags:
-      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY  
-      - -ffunction-sections
-      - -fdata-sections
-      - -Wl,--gc-sections      
-
-<<: !include .def.common.yaml
-
-esp8266:
-  board: esp01_1m
-  board_flash_mode: dout
-
 packages:
-  - !include packages/min-info.yaml
-  - !include packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
-  - !include packages/webe.yaml
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include ../packages/min-info.yaml
+  - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
+  - !include ../packages/webe.yaml
 
 binary_sensor:
   - platform: gpio

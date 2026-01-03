@@ -15,4 +15,5 @@ substitutions:
     status_led_gpio: GPIO13  # used by status_led package
     room: "desk"
 
-<<: !include devices/.sonoff.bridge.yaml
+packages:
+  - !include models/sonoff.bridge.yaml

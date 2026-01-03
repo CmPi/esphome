@@ -7,18 +7,15 @@
 
 substitutions:
   device_type: "witty"
-  config_version: "0.5.002"
+  board: esp12e
   pwr_mode: NONE
   pwr_val: 18dB
   webe_api: !secret webe_api
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
   status_led_gpio: GPIO02  # used by status_led package
+  config_version: "0.5.002"
     
-esp8266:
-  board: esp12e
-  board_flash_mode: dout
-
 packages:
   - !include ../packages/esphome.esp8266.yaml
   - !include ../packages/wifi-mdns.yaml

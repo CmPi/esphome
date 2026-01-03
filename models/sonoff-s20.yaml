@@ -6,17 +6,15 @@
 #
 
 substitutions:
-    device_type: "s2x"
-    soc_type: "ESP8266"
-    config_version: "0.2.002"
-    pwr_mode: NONE
-    pwr_val: 18dB
-    status_led_gpio: GPIO13  # used by status_led package
-    webe_api: !secret webe_api
-    webe_usrm: !secret webe_usrm    
-    webe_key: !secret webe_key
-
-esp8266:
+  device_type: "s2x"
+  soc_type: "ESP8266"
+  config_version: "0.2.002"
+  pwr_mode: NONE
+  pwr_val: 18dB
+  status_led_gpio: GPIO13  # used by status_led package
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
   board: esp01_1m
 
 packages:

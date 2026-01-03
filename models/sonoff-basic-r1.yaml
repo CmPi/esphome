@@ -7,32 +7,22 @@
 
 substitutions:
   device_type: "basic"
-  config_version: "0.2.002"
+  board: esp01_1m
   pwr_mode: NONE
   pwr_val: 18dB
   webe_api: !secret webe_api
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
   status_led_gpio: GPIO13  # used by status_led package
-
-esphome:
-  <<: !include .def.esphome.common.yaml
-  platformio_options:
-    board_build.ldscript: eagle.flash.1m.ld
-    build_flags:
-      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY  
-
-<<: !include .def.common.yaml
-
-esp8266:
-  board: esp01_1m
-  board_flash_mode: dout
-  early_pin_init: false
+  config_version: "0.2.002"
 
 packages:
-  - !include packages/min-info.yaml
-  - !include packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
-  - !include packages/webe.yaml
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include ../packages/min-info.yaml
+  - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
+  - !include ../packages/webe.yaml
 
 binary_sensor:
   - platform: gpio
@@ -83,7 +73,7 @@ switch:
     # - script.execute: report_state         
 
 logger:
-  <<: !include .logger.none.yaml
+  <<: !include ../keys/logger.none.yaml
   
 mdns:
   disabled: true

@@ -18,3 +18,8 @@ esphome:
       - -ffunction-sections
       - -fdata-sections
       - -Wl,--gc-sections      
+
+esp8266:
+  board: ${board}
+  board_flash_mode: dout
+

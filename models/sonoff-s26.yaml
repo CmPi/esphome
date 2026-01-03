@@ -1,25 +1,19 @@
 #
-# @file models/ttgo32.yaml
+# @file models/sonoff-s26.yaml
 # @brief common part of a TTGO
 # @author CmPi <github.com/CmPi>
 # @date creation 2026-01-02
 #
 
 substitutions:
-    device_type: "s2x"
-    soc_type: "ESP8266"
-
-esphome:
-  <<: !include .def.esphome.common.yaml
-  platformio_options:
-    board_build.ldscript: eagle.flash.1m.ld
-    build_flags:
-      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY  
-
-<<: !include .def.common.yaml
-
-esp8266:
+  device_type: "s2x"
+  soc_type: "ESP8266"
   board: esp01_1m
+
+packages:
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
 
 globals:
     - id: http_rsp_body

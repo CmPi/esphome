@@ -7,6 +7,7 @@
 
 substitutions:
   device_type: "h801"
+  board: esp01_1m
   soc_type: "ESP8266"
   pwr_mode: NONE
   pwr_val: 18dB
@@ -21,10 +22,6 @@ packages:
   - !include ../packages/api-ota.yaml    
   - !include ../packages/min-info.yaml
   - !include ../packages/webe.yaml
-
-esp8266:
-  board: esp01_1m
-  board_flash_mode: dout
 
 globals:
   - id: emrg_on
