@@ -1,0 +1,16 @@
+#
+# @file packages/rgb-light.yaml
+# @brief Configuration package for RGB light devices
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-03
+#
+
+light:
+  - platform: esp32_rmt_led_strip
+    id: l_rgb
+    rgb_order: GRB
+    pin: ${ws2812_led_gpio}       # Change this to your WS2812 data pin
+    num_leds: 1       # Number of LEDs in your strip
+    chipset: WS2812
+    name: "LED RGB"
+

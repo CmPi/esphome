@@ -2,33 +2,21 @@
 # @file ttgo32-1.yaml
 # @brief Specific Device Configuration
 # @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
 #
 
 substitutions:
-    device_model: "ttgo32"
-    device_fn: "TTGO-32-SENSORS (TFT)"
-    device_sn: "ttgo32-1"
-    device_lc: "0cc2c8"
-    full_mac: "3C:61:05:0C:C2:C8"
-    device_type: "TTGO-32"
-    config_version: "0.5.002"
-    ip_0: 192.168.0.39
-    pwr_mode: NONE
-    pwr_val: 18dB
-    webe_api: !secret webe_api
-    webe_usrm: !secret webe_usrm    
-    webe_key: !secret webe_key
-    detected_flash_size: 4MB
-    room: cuisine
-    # display
-    bw_only: false
-    bl_supported: 'true'
-    rotation: 270
-    # pages and menus
-    bs_select_gpio: GPIO00
-    bs_next_gpio: GPIO35
-
-<<: !include models/ttgo32.yaml  
+  device_fn: "TTGO-32-SENSORS (TFT)"
+  device_sn: "ttgo32-1"
+  device_lc: "0cc2c8"
+  full_mac: "3C:61:05:0C:C2:C8"
+  ip_0: 192.168.0.39
+  room: cuisine
+  detected_flash_size: 4MB
+  rotation: 270
+ 
+packages:
+  - !include models/ttgo32.yaml
 
 external_components:
   - source: github://CmPi/myEhThings

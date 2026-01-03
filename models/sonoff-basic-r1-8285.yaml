@@ -1,0 +1,82 @@
+esphome:
+  <<: !include .def.esphome.common.yaml
+  platformio_options:
+    board_build.ldscript: eagle.flash.1m.ld
+    build_flags:
+      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY  
+
+<<: !include .def.common.yaml
+
+esp8266:
+  board: esp8285
+  board_flash_mode: dout
+  early_pin_init: false
+
+packages:
+  - !include packages/min-info.yaml
+  - !include packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
+  - !include packages/webe.yaml
+  
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button_1
+    name: "Button"
+    on_press:
+      - switch.toggle: s_relay
+#  - platform: gpio
+#    pin:
+#     number: GPIO14
+#     mode:
+#       input: true
+#       pullup: true
+#     inverted: true
+#   id: button_2
+#   name: "internal button"
+# - platform: status
+#   name: "status"
+
+switch:
+  - platform: output
+    id: s_relay
+    name: "Relay"
+    output: o_relay
+
+output:
+  - platform: gpio
+    id: o_relay
+    pin: GPIO12
+  - platform: gpio
+    id: !extend o_led    
+    pin:
+      number: GPIO13
+      inverted: true
+    
+script:
+    - id: !extend declare_config
+      mode: queued
+      then: 
+#       - !include { file: .script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+        - delay: 500ms
+#       - !include { file: .script.register.switch.yaml, vars: { sSensorDomain: "switch", sSensorId: "relay"} }  
+        - delay: 200ms
+        - script.execute: report_state   # << call it here after registration        
+    - id: report_state
+      mode: queued
+      then:
+        - delay: 500ms
+#       - !include { file: .script.report.binary-switch.yaml, vars: { sSensorDomain: "switch", sSensorId: "relay"} } 
+
+logger:
+  level: ERROR
+  baud_rate: 0  # disable UART logging
+  
+mdns:
+  disabled: true
+
+  

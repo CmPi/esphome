@@ -1,0 +1,131 @@
+#
+# @file ttgo-82661-1.yaml
+# @brief Specific Device Configuration
+# @author CmPi <cmpi@webe.fr>
+#
+
+substitutions:
+    device_fn: "TTGO 8266 w/ screen"
+    device_lc: "91c19c"
+    full_mac: "68:c6:3a:91:c1:9c"
+    device_type: "TTGO-8266"
+    config_version: "0.3.343"
+    ip_0: 192.168.0.44    
+    pwr_mode: NONE
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+    detected_flash_size: 4MB
+    # display
+    bw_only: true
+    bl_supported: false
+
+esphome:
+  <<: !include .def.esphome.common.yaml
+  includes:
+    - src/met.cpp
+    - src/met.h
+
+<<: !include .def.common.yaml
+#<<: !include .def.common.display.yaml  
+
+packages:
+  - !include packages/display.date-time.yaml
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+  level: DEBUG
+
+text_sensor:
+    - <<: !include .text_sensor.wifi_info.yaml
+    - <<: !include .text_sensor.version.yaml
+ #  - <<: !include def.sensor.hermes.yaml
+
+one_wire:
+  - platform: gpio
+    pin: GPIO13
+
+sensor:
+  - <<: !include .sensor.uptime.yaml
+  - id: ds18b20
+    platform: dallas_temp
+    address: 0xc3000801e355ed10
+    name: "Temperature"
+    device_class: temperature    
+    icon: "mdi:thermometer"
+    on_value:
+      if:
+        condition:
+          wifi.connected
+        then:  
+          - delay: 5s  
+          - script.execute: report_ds18b20  
+script:
+    - id: declare_config
+      then: 
+        - !include { file: .script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ds18b20"} }          
+        - delay: 7s       
+        - !include { file: .script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+    - id: report_uptime
+      then: !include { file: .component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+    - id: report_ds18b20
+      then: !include { file: .component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ds18b20"} }  
+    - id: process_json
+      then:
+        - lambda: |-
+            json::parse_json(id(http_rsp_body), [](JsonObject root)->bool {
+              if (!root.isNull()) {
+                if (root["line1"].is<const char*>()) {
+                  const char* tmp = root["line1"];
+                  id(line1).clear();
+                  id(line1).append(tmp);
+                }
+                if (root["line2"].is<const char*>()) {
+                  const char* tmp = root["line2"];
+                  id(line2).clear();
+                  id(line2).append(tmp);
+                }
+                if (root["line3"].is<const char*>()) {
+                  const char* tmp = root["line3"];
+                  id(line3).clear();
+                  id(line3).append(tmp);
+                }
+                if (root["line4"].is<const char*>()) {
+                  const char* tmp = root["line4"];
+                  id(line4).clear();
+                  id(line4).append(tmp);
+                }
+                if (root["line5"].is<const char*>()) {
+                  const char* tmp = root["line5"];
+                  id(line5).clear();
+                  id(line5).append(tmp);
+                }
+                if (root["line6"].is<const char*>()) {
+                  const char* tmp = root["line6"];
+                  id(line6).clear();
+                  id(line6).append(tmp);
+                }
+                if (root["bTime"].is<const char*>()) {
+                  id(bTime) = ( root["bTime"] ? true : false );   
+                }
+                if (root["bGauge"].is<const char*>()) {
+                  id(bGauge) = ( root["bGauge"] ? true : false );   
+                }
+              }
+              return true;
+            });
+    
+<<: !include .display.ssd1306_i2c.yaml      
+
+
+# Chip is ESP8266EX
+# Features: Wi-Fi, 160MHz
+# Crystal is 26MHz
+# MAC: 68c63a91c19c
+# Manufacturer: c8
+# Device: 4016
+# Status value: 0x200002
+# Detected flash size: 4MB

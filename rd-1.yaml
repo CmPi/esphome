@@ -6,10 +6,10 @@
 #
 
 substitutions:
-    device_fn: "Room Device 1"
-    device_lc: "759954"
-    ip_0: 192.168.0.235
-    room: chambre
+  device_fn: "Room Device 1"
+  device_lc: "759954"
+  ip_0: 192.168.0.235
+  room: "chambre"
 
 packages:
   - !include models/rd.yaml

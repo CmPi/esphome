@@ -71,7 +71,7 @@ script:
   - id: report_uptime
     mode: queued
     then:
-      - !include { file: ../keys/script.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+      - !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
   - id: process_json
     then:
     - delay: 1ms

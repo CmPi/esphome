@@ -1,0 +1,44 @@
+esphome:
+  name: $device_lc
+  friendly_name: "${device_fn} mini"
+  platformio_options:
+    board_build.ldscript: eagle.flash.1m.ld
+    build_flags:
+      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY
+
+esp8266:
+  board: esp01_1m
+  board_flash_mode: dout
+
+wifi:
+  reboot_timeout: 0s
+  fast_connect: False
+  networks:
+    - ssid: !secret wifi1_ssid
+      password: !secret wifi1_password
+    - ssid: !secret wifi2_ssid
+      password: !secret wifi2_password      
+  manual_ip:
+    # Set this to the IP of the ESP
+    static_ip: ${ip_0}
+    # Set this to the IP address of the router. Often ends with .1
+    gateway: 192.168.0.1
+    # The subnet of the network. 255.255.255.0 works for most home networks.
+    subnet: 255.255.255.0    
+    dns1: 8.8.8.8        # Google DNS
+    dns2: 1.1.1.1        # Cloudflare DNS 
+
+api:
+  encryption:
+    key: !secret api_key
+  reboot_timeout: 0s  # Prevents "unavailable" status    
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+logger:
+  <<: !include .logger.none.yaml    
+
+mdns:
+  disabled: true   

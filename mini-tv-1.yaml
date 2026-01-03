@@ -1,31 +1,18 @@
 #
-# @file mini-tv.yaml
+# @file mini-tv-1.yaml
 # @brief Specific Device Configuration
 # @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
 #
 
 substitutions:
-    device_model: "mini-tv"
-    device_fn: "ESP32-TV (TFT)"
-    device_lc: "5b6ca0"
-    soc_type: "ESP32-C3"
-    config_version: "0.2.002"
-    ip_0: 192.168.0.230
-    pwr_mode: LIGHT
-    pwr_val: 20dB
-    detected_flash_size: 4MB
-    room: salon
-    # display
-    bw_only: false
-    bl_supported: 'false'
-    # pages and menus
-    bs_select_gpio: GPIO09
-    bs_next_gpio: GPIO10
-    # status LED GPIO (required by package/status_led.yaml)
-    status_led_gpio: GPIO11 
+  device_fn: "ESP32-TV (TFT)"
+  device_lc: "5b6ca0"
+  ip_0: 192.168.0.230
+  room: salon
 
-<<: !include models/mini-tv.yaml  
-
+packages:
+  - !include models/mini-tv.yaml
 
 
 # Chip is ESP32-C3 (QFN32) (revision v0.4)

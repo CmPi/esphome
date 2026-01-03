@@ -1,0 +1,19 @@
+http_request.post:
+  url: "${webe_api}"
+  request_headers:
+    Content-Type: application/json
+  json: |-
+    root["cmd"] = "component";
+    root["fm"] = "${device_lc}";
+    root["id"] = "${sSensorId}";
+    root["domain"] = "${sSensorDomain}";
+    root["name"] = id(${sSensorId}).get_name();
+    root["api_id"] = id(${sSensorId}).get_object_id();
+    auto icon = id(${sSensorId}).get_icon_ref();
+    root["icon"] = icon.empty() ? "(undefined)" : icon.str();
+    root["unit_of_measurement"] = id(${sSensorId}).get_unit_of_measurement_ref();
+    root["accuracy_decimals"] = id(${sSensorId}).get_accuracy_decimals();
+    root["app"] = "ESPHome";
+    root["usrm"] = "${webe_usrm}";
+    root["key"] = "${webe_key}";
+  capture_response: false

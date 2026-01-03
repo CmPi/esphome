@@ -1,0 +1,85 @@
+#
+# @file models/ttgo32.yaml
+# @brief common part of a TTGO
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+    device_type: "s2x"
+    soc_type: "ESP8266"
+
+esphome:
+  <<: !include .def.esphome.common.yaml
+  platformio_options:
+    board_build.ldscript: eagle.flash.1m.ld
+    build_flags:
+      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY  
+
+<<: !include .def.common.yaml
+
+esp8266:
+  board: esp01_1m
+
+globals:
+    - id: http_rsp_body
+      type: std::string
+      restore_value: no
+
+text_sensor:
+  - <<: !include .text_sensor.wifi_info.yaml
+  - <<: !include .text_sensor.version.yaml  
+  
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Button"
+    on_press:
+      - switch.toggle: relay
+  - platform: status
+    name: "Status"
+
+sensor:
+  - <<: !include .sensor.uptime.yaml
+  - <<: !include .sensor.wifi_signal.yaml
+
+# Green LED (controllable)
+output:
+  - platform: gpio
+    pin: GPIO13
+    inverted: yes
+    id: green_led_output
+    
+switch:
+  - platform: gpio
+    name: "Relay"
+    pin: GPIO12
+    id: relay
+
+light:
+  - platform: binary
+    name: "Green LED"
+    id: green_led
+    output: green_led_output
+    internal: true    
+   
+script:
+    - id: declare_config
+      then: 
+        - !include { file: .register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+        - delay: 10s
+        - !include { file: .register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }  
+    - id: report_uptime
+      then: 
+        - !include { file: .component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+        - delay: 10s
+        - !include { file: .component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }  
+
+logger:
+  <<: !include .logger.error.yaml
+  
+mdns:
+  disabled: true

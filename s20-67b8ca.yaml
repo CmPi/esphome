@@ -1,0 +1,17 @@
+#
+# @file s20-67b8ca.yaml
+# @brief Specific Configuration for a Sonoff S20 device having 80:7D:3A:67:B8:CA MAC address
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_fn: "Black light"
+  device_lc: 67b8ca
+  ip_0: 192.168.0.31   
+  room: "desk"
+
+packages:
+  - !include models/sonoff-s20.yaml
+
+# MAC: 80:7D:3A:67:B8:CA

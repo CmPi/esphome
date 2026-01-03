@@ -1,0 +1,17 @@
+#
+# @file s20-44068f.yaml
+# @brief Specific Configuration for a Sonoff S26 device having BC:DD:C2:44:06:8F MAC address
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_fn: "Eggs cooker"
+  device_lc: "44068f"
+  ip_0: 192.168.0.36   
+  room: "cuisine"
+    
+packages:
+  - !include models/sonoff-s20.yaml
+
+# MAC: "BC:DD:C2:44:06:8F"

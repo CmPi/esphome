@@ -1,0 +1,308 @@
+#
+# @file models/witty.yaml
+# @brief Device configuration for a Witty Cloud
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_type: "witty"
+  config_version: "0.5.002"
+  pwr_mode: NONE
+  pwr_val: 18dB
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  status_led_gpio: GPIO02  # used by status_led package
+    
+esp8266:
+  board: esp12e
+  board_flash_mode: dout
+
+packages:
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include ../packages/min-info.yaml
+  - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
+  - !include ../packages/webe.yaml
+
+# PLATFORMS
+
+one_wire:
+  - platform: gpio
+    pin: GPIO4
+
+# ALL SENSORS
+
+sensor:
+  # room brightness using (LDR)
+  - id: brightness
+    platform: adc
+    pin: A0
+    name: "Luminosité"
+    update_interval: 60s
+    filters:
+      - multiply: 100
+    unit_of_measurement: "%"
+    icon: "mdi:brightness-6"
+  # Room température sensor (DS18B20)
+  - <<: !include ../keys/sensor.ds18b20.yaml
+  # albus nexus CPU temp  
+  - platform: homeassistant
+    id: nas_cpu_temp
+    entity_id: sensor.albusnexus_cpu_temp  # Vérifie bien l'ID exact dans HA
+    internal: true # On ne le renvoie pas à HA, on s'en sert juste en interne
+    on_value:
+      then:
+        - script.execute:
+            id: update_witty_led
+            temp_val: !lambda "return x;"
+
+text_sensor:
+  # ZFS Pool Health Sensors
+  - platform: homeassistant
+    id: zfs_health_rpool
+    entity_id: sensor.albusnexus_zfs_rpool_status
+    internal: true
+    on_value:
+      then:
+        - script.execute: check_zfs_alarm
+  - platform: homeassistant
+    id: zfs_health_backuppool
+    entity_id: sensor.albusnexus_zfs_backuppool_status
+    internal: true
+    on_value:
+      then:
+        - script.execute: check_zfs_alarm # ALL OUTPUTS 
+
+# LED RGB (GPIO 15 pour RGB, GPIO 12, 13, 14 pour R, G, B)
+
+output:
+  - platform: gpio
+    id: !extend o_led
+    pin:
+      number: GPIO2
+      inverted: true
+  - platform: esp8266_pwm
+    id: output_red
+    pin: GPIO15
+    frequency: 1000 Hz
+  - platform: esp8266_pwm
+    id: o_green
+    pin: GPIO12
+    frequency: 1000 Hz
+  - platform: esp8266_pwm
+    id: output_blue
+    pin: GPIO13
+    frequency: 1000 Hz
+
+button:
+  # Reboot switch (after OTA for example)
+  - platform: restart
+    id: b_restart
+    name: "Reboot"
+    icon: "mdi:restart"
+    entity_category: diagnostic
+    
+switch:
+  # 🚨 Alarm mode toggle with auto-off
+  - platform: template
+    id: sw_alarm
+    name: "Alarm Mode"
+    icon: mdi:alarm-light
+    lambda: |-
+      return id(witty_led).current_values.is_on() &&
+             id(witty_led).get_effect_name() == "Alarm";
+    turn_on_action:
+      - light.turn_on:
+          id: witty_led
+          effect: "Alarm"
+      # Auto turn off after 60 seconds
+      - delay: 60s
+      - if:
+          condition:
+            switch.is_on: sw_alarm
+          then:
+            - switch.turn_off: sw_alarm
+    turn_off_action:
+      - light.turn_off: witty_led
+
+  # 🔔 Notification mode toggle with auto-off
+  - platform: template
+    id: sw_notification
+    name: "Notification Mode"
+    icon: mdi:bell-alert
+    lambda: |-
+      return id(witty_led).current_values.is_on() &&
+             id(witty_led).get_effect_name() == "RGB Notification";
+    turn_on_action:
+      - light.turn_on:
+          id: witty_led
+          effect: "RGB Notification"
+      # Auto turn off after 60 seconds
+      - delay: 60s
+      - if:
+          condition:
+            switch.is_on: sw_notification
+          then:
+            - switch.turn_off: sw_notification
+    turn_off_action:
+      - light.turn_off: witty_led
+  - platform: template
+    name: "NAS LED Silence"
+    id: sw_led_silence
+    icon: mdi:led-off
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    # ACTION QUAND ON ACTIVE (SILENCE)
+    on_turn_on:
+      then:
+        - if:
+            condition:
+              # On n'éteint QUE si l'alarme n'est pas en cours
+              lambda: 'return id(witty_led).get_effect_name() != "Alarm";'
+            then:
+              - light.turn_off: witty_led
+    # ACTION QUAND ON DESACTIVE (RETOUR AU NORMAL)
+    on_turn_off:
+      then:
+        - script.execute:
+            id: update_witty_led
+            temp_val: !lambda "return id(nas_cpu_temp).state;"
+
+light:
+  - platform: rgb
+    name: "LED RGB"
+    id: witty_led
+    red: output_red
+    green: o_green
+    blue: output_blue
+    restore_mode: RESTORE_DEFAULT_OFF
+    default_transition_length: 500ms
+    effects:
+      # 🚨 Alarm: flashes red and blue
+      - strobe:
+          name: "Alarm"
+          colors:
+            - state: true
+              red: 100%
+              green: 0%
+              blue: 0%
+              duration: 300ms
+            - state: true
+              red: 0%
+              green: 0%
+              blue: 100%
+              duration: 300ms
+      # 🔔 Notification (slow RGB cycle)
+      - strobe:
+          name: "RGB Notification"
+          colors:
+            - state: true
+              red: 100%
+              green: 0%
+              blue: 0%
+              duration: 2s
+            - state: true
+              red: 0%
+              green: 100%
+              blue: 0%
+              duration: 2s
+            - state: true
+              red: 0%
+              green: 0%
+              blue: 100%
+              duration: 2s
+
+script:
+  # Register sensors to WeBe
+  - id: !extend declare_config
+    then: 
+      - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+      - delay: 10s
+      - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "brightness"} }  
+      - delay: 10s
+#       - !include { file: .script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }  
+      - delay: 10s
+      - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ds18b20"} }  
+  - id: !extend report_uptime
+    then: 
+      - !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }
+      - delay: 10s
+      - !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "brightness"} }  
+      - delay: 10s
+#       - !include { file: .component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }  
+      - delay: 10s
+      - !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ds18b20"} }  
+  # Check ZFS pool health and trigger alarm if needed    
+  - id: check_zfs_alarm
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return (id(zfs_health_rpool).state != "ONLINE") || 
+                     (id(zfs_health_backuppool).state != "ONLINE");
+          then:
+            - light.turn_on:
+                id: witty_led
+                effect: "Alarm"
+          else:
+            - light.turn_off:
+                id: witty_led
+            - script.execute:
+                id: update_witty_led
+                temp_val: !lambda "return id(nas_cpu_temp).state;"
+  - id: update_witty_led
+    parameters:
+      temp_val: float
+    then:
+      - if:
+          condition:
+            # PRIORITÉ 1 : ALARME ZFS (On ne touche à rien)
+            lambda: 'return id(witty_led).get_effect_name() == "Alarm";'
+          then:
+            - logger.log: "Alarme active : mise à jour température ignorée."
+          else:
+            - if:
+                condition:
+                  # PRIORITÉ 2 : MODE SILENCE
+                  lambda: 'return id(sw_led_silence).state;'
+                then:
+                  - light.turn_off: witty_led
+                else:
+                  # PRIORITÉ 3 : AFFICHAGE TEMPÉRATURE (Logique normale)
+                  - lambda: |-
+                      float br_mult = (id(brightness).state < 10.0) ? 0.2 : 1.0;
+                      float r = 0, g = 0, b = 0;
+                      float target_br = 0.4;
+
+                      if (temp_val < 50.0) {
+                        target_br = 0.0;
+                      } else if (temp_val < 53.0) {
+                        g = 0.8; // Vert
+                      } else if (temp_val < 60.0) {
+                        r = 0.8; g = 0.3; // Orange
+                      } else {
+                        r = 1.0; // Rouge
+                      }
+
+                      if (target_br == 0.0) {
+                        id(witty_led).turn_off().perform();
+                      } else {
+                        auto call = id(witty_led).turn_on();
+                        call.set_rgb(r, g, b);
+                        call.set_brightness(target_br * br_mult);
+                        call.set_transition_length(1000);
+                        call.perform();
+                      }
+
+
+logger:
+  <<: !include ../keys/logger.none.yaml
+  
+mdns:
+  disabled: true
+
+# https://yoursunny.com/t/2016/WittyCloud-first/
+# https://github.com/nickzoic/mpy-tut/blob/master/tut/witty-cloud.md

@@ -1,0 +1,36 @@
+# Specific Device Configuration
+
+substitutions:
+    device_fn: "MINI R4"
+    device_lc: 4a01bc
+    device_type: "MINI R4"
+    config_version: 0.1.293
+    ip_0: 192.168.0.65   
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+
+packages:
+  - !include models/mini-r4.yaml
+
+# ESPRESSIF TOOL
+
+# Chip is ESP32-D0WD-V3 (revision v3.1)
+# Features: Wi-Fi, BT, Dual Core + LP Core, 240MHz, Vref calibration in eFuse, Coding Scheme None
+# Crystal is 40MHz
+# MAC: a0:b7:65:4a:01:bc
+# Manufacturer: ef
+# Device: 4016
+# Status value: 0x600200
+# Detected flash size: 4MB
+
+# ESPHOME DEVICE INFO
+
+# 2025.10.2
+# Chip: ESP32 Features:2.4GHz WiFi, BLE, BT, Cores:2 Revision:301
+# CPU Frequency: 160 MHz
+# Framework: ESP-IDF
+# ESP-IDF: 5.4.2
+# EFuse MAC: A0:B7:65:4A:01:BC
+# Reset: power-on event
+# Wakeup: undefined

@@ -42,4 +42,4 @@ text_sensor:
 script:
   - id: report_rssi
     then: 
-      - !include { file: ../keys/script.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }
+      - !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }

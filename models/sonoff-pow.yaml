@@ -1,0 +1,116 @@
+#
+# @file models/ttgo32.yaml
+# @brief common part of a TTGO
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_type: "pow"
+  soc_type: "ESP8266"
+  config_version: "0.2.002"
+  pwr_mode: NONE
+  pwr_val: 18dB
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  status_led_gpio: GPIO15  # used by status_led package
+
+esphome:
+  <<: !include .def.esphome.common.yaml
+  platformio_options:
+    board_build.ldscript: eagle.flash.1m.ld
+    build_flags:
+      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY  
+      - -ffunction-sections
+      - -fdata-sections
+      - -Wl,--gc-sections      
+
+<<: !include .def.common.yaml
+
+esp8266:
+  board: esp01_1m
+  board_flash_mode: dout
+
+packages:
+  - !include packages/min-info.yaml
+  - !include packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
+  - !include packages/webe.yaml
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Button"
+    on_press:
+      - switch.toggle: fakebutton
+  - platform: template
+    name: "Running"
+    filters:
+      - delayed_off: 15s
+    lambda: |-
+      if (isnan(id(power).state)) {
+        return {};
+      } else if (id(power).state > 4) {
+        return true;
+      } else {
+        return false;
+      }
+
+sensor:
+  - platform: hlw8012
+    sel_pin: 5
+    cf_pin: 14
+    cf1_pin: 13
+    update_interval: 10s
+    current:
+      name: "Current"
+    voltage:
+      name: "Voltage"
+    power:
+      name: "Power"
+      id: power
+      on_value_range:
+        - above: 4.0
+          then:
+            - light.turn_on: l_led
+        - below: 3.0
+          then:
+            - light.turn_off: l_led
+
+switch:
+  - platform: template
+    name: "Relay"
+    optimistic: true
+    id: fakebutton
+    restore_mode: DISABLED
+    turn_on_action:
+      - switch.turn_on: relay
+      - light.turn_on: l_led
+    turn_off_action:
+      - switch.turn_off: relay
+      - light.turn_off: l_led
+  - platform: gpio
+    id: relay
+    pin: GPIO12
+
+script:
+    - id: !extend declare_config
+      then: 
+        - !include { file: .script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+    - id: !extend process_json
+      then:
+        - lambda: |-
+            json::parse_json(id(http_rsp_body), [](JsonObject root)->bool {
+              if (!root.isNull()) {
+              }
+              return true;
+            });      
+
+logger:
+  <<: !include .logger.error.yaml
+
+mdns:
+  disabled: true

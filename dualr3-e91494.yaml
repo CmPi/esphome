@@ -1,0 +1,14 @@
+# Specific Device Configuration
+
+substitutions:
+    device_fn: "DUAL R3 V2.0"
+    device_lc: e91494
+    full_mac: "C8:F0:9E:E9:14:94"
+    device_type: "R3V2"
+    config_version: "0.1.338"
+    ip_0: 192.168.0.199  
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+
+<<: !include .sonoff-dualr3.yaml

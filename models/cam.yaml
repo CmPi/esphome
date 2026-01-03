@@ -6,7 +6,7 @@
 #
 
 substitutions:
-  device_model: "cam"
+  device_type: "cam"
   soc_type: "ESP32"
   pwr_mode: NONE
   pwr_val: 20dB

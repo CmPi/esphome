@@ -1,0 +1,5 @@
+- id: ds18b20
+  platform: dallas_temp
+  address: 0x33000001f12c0828
+  name: "Temperature"
+  device_class: temperature    

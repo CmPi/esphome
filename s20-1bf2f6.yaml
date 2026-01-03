@@ -1,0 +1,17 @@
+#
+# @file s20-1bf2f6.yaml
+# @brief Specific Configuration for a Sonoff S20 device having CC:50:E3:1B:F2:F6 MAC address
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_fn: "TV lights"
+  device_lc: 1bf2f6
+  ip_0: 192.168.0.29   
+  room: "salon"
+    
+packages:
+  - !include models/sonoff-s20.yaml
+
+# MAC: CC:50:E3:1B:F2:F6

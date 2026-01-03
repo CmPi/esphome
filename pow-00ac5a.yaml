@@ -1,0 +1,17 @@
+#
+# @file cam-2.yaml
+# @brief Specific Device Configuration
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_fn: "PC desk"
+  device_lc: 00ac5a
+  ip_0: 192.168.0.25   
+  room: "desk"
+    
+packages:
+  - !include models/sonoff-pow.yaml            
+
+# MAC: EC:FA:BC:00:AC:5A  

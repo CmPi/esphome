@@ -1,0 +1,25 @@
+#
+# @file basic-118364.yaml
+# @brief Specific Configuration for a H801 device having ${full_mac} address
+# @author CmPi <cmpi@webe.fr>
+# @date creation 2026-01-03
+#
+
+substitutions:
+    device_fn: "Free SONOFF BASIC"
+    device_lc: "118364"
+    ip_0: 192.168.0.20   
+    room: "salon"
+    
+packages:
+  - !include models/sonoff-basic-r1.yaml            
+
+# Chip is ESP8266EX
+# Features: Wi-Fi, 160MHz
+# Crystal is 26MHz
+# MAC: 2c:3a:e8:11:83:64
+# MAC: 2c3ae8118364
+# Manufacturer: 5e (Espressif Systems)
+# Device: 4014
+# Status value: 0x0000
+# Detected flash size: 1MB

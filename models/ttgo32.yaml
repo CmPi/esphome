@@ -1,8 +1,24 @@
 #
-# @file .device.esp32-c3.mini.yaml
+# @file models/ttgo32.yaml
 # @brief common part of a TTGO
 # @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
 #
+
+substitutions:
+  device_type: "ttgo32"
+  config_version: "0.2.002"
+  pwr_mode: NONE
+  pwr_val: 18dB
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  # display
+  bw_only: false
+  bl_supported: 'true'
+  # pages and menus
+  bs_select_gpio: GPIO00
+  bs_next_gpio: GPIO35
 
 esphome:
   project:

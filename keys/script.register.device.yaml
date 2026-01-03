@@ -1,0 +1,16 @@
+http_request.post:
+  url: "${webe_api}"
+  request_headers:
+    Content-Type: application/json
+  json: |-
+    root["cmd"] = "device";
+    root["fm"] = "${device_lc}";
+    root["type"] = "${device_type}";
+    root["name"] = "${device_fn}";
+    root["wifi"]["ip"] = id(ip).state;
+    root["wifi"]["mac"] = id(mac).state;
+    root["versions"]["config"] = "${config_version}";
+    root["app"] = "ESPHome";
+    root["usrm"] = "${webe_usrm}";
+    root["key"] = "${webe_key}";
+  capture_response: false

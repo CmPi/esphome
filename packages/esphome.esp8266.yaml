@@ -12,5 +12,9 @@ esphome:
   name: "${device_type}-${device_lc}"
   friendly_name: "$device_fn"
   platformio_options:
-    board_build.flash_mode: dio
-    board_build.flash_size: ${detected_flash_size}
+    board_build.ldscript: eagle.flash.1m.ld
+    build_flags:
+      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY  
+      - -ffunction-sections
+      - -fdata-sections
+      - -Wl,--gc-sections      

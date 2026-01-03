@@ -1,0 +1,14 @@
+# Specific Device Configuration
+
+substitutions:
+    device_fn: "Left Bed Table"
+    device_lc: "aec8b1"
+    full_mac: ""
+    device_type: "BASIC RF"
+    config_version: "0.1.293"
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+    ip_0: 192.168.0.13   
+    
+<<: !include .device.sonoff-basic-r1.yaml            

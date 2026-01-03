@@ -1,0 +1,70 @@
+#
+# @file models/sonoff-s20.yaml
+# @brief Device configuration for Mini TV
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+    device_type: "s2x"
+    soc_type: "ESP8266"
+    config_version: "0.2.002"
+    pwr_mode: NONE
+    pwr_val: 18dB
+    status_led_gpio: GPIO13  # used by status_led package
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+
+esp8266:
+  board: esp01_1m
+
+packages:
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include ../packages/min-info.yaml
+  - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
+  - !include ../packages/webe.yaml
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Button"
+    on_press:
+      - switch.toggle: relay
+
+# Relay output
+output:
+  - platform: gpio
+    pin: GPIO12
+    id: relay_output
+  - platform: gpio
+    pin:
+      number: GPIO13
+      inverted: true
+    id: !extend o_led
+
+# Relay switch using output
+switch:
+  - platform: output
+    name: "Relay"
+    output: relay_output
+    id: relay
+    on_turn_on:
+      - script.execute: status_led_blinkx3
+    on_turn_off:
+      - script.execute: status_led_blinkx3
+
+script:
+  - id: !extend declare_config
+    mode: queued
+    then: 
+      - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+
+logger:
+  <<: !include ../keys/logger.none.yaml
+  

@@ -1,0 +1,28 @@
+# Specific Device Configuration
+
+substitutions:
+    device_fn: "Sofa lamp"
+    device_lc: "fa68ec"
+    full_mac: "DC:4F:22:FA:68:EC"
+    device_type: "BASIC"
+    config_version: "0.1.345"
+    ip_0: 192.168.0.22   
+    pwr_mode: NONE
+    pwr_val: 18dB
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+    status_led_gpio: GPIO13  # used by status_led package
+    room: "salon"
+
+packages:
+  - !include models/sonoff-basic-r1-8285.yaml
+
+# Chip is ESP8285N08
+# Features: Wi-Fi, 160MHz, Embedded Flash
+# Crystal is 26MHz
+# MAC: dc4f22fa68ec
+# Manufacturer: 51 (Espressif Systems)
+# Device: 4014
+# Status value: 0x0002
+# Detected flash size: 1MB

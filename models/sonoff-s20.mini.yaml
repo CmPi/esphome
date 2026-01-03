@@ -1,0 +1,37 @@
+#
+# @file models/sonoff-s20.mini.yaml
+# @brief Device configuration for Mini TV
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_type: "s2x"
+  soc_type: "ESP8266"
+  config_version: "0.2.002"
+  pwr_mode: NONE
+  pwr_val: 18dB
+  status_led_gpio: GPIO13  # used by status_led package
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+
+esphome:
+  name: ${device_lc}
+  friendly_name: "${device_fn} mini"
+  platformio_options:
+    board_build.ldscript: eagle.flash.1m64.ld
+    build_flags:
+      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY
+
+esp8266:
+  board: esp01_1m
+  board_flash_mode: dout
+
+packages:
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+
+logger:
+  <<: !include ../keys/logger.none.yaml

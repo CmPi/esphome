@@ -5,6 +5,22 @@
 # @date creation 2026-01-02
 #
 
+substitutions:
+  device_type: "mini-tv"
+  soc_type: "ESP32-C3"
+  pwr_mode: LIGHT
+  pwr_val: 20dB
+  detected_flash_size: 4MB
+  config_version: "0.2.002"
+  # display
+  bw_only: false
+  bl_supported: 'false'
+  # pages and menus
+  bs_select_gpio: GPIO09
+  bs_next_gpio: GPIO10
+  # status LED GPIO (required by package/status_led.yaml)
+  status_led_gpio: GPIO11 
+
 esp32:
   board: esp32-c3-devkitm-1
   variant: esp32c3

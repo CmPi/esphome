@@ -1,0 +1,17 @@
+#
+# @file s20-1dc824.yaml
+# @brief Specific Configuration for a Sonoff S20 device having 60:01:94:1D:C8:24 MAC address
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_fn: "White lamp"
+  device_lc: 1dc824
+  ip_0: 192.168.0.30  
+  room: "desk"
+    
+packages:
+  - !include models/sonoff-s20.yaml
+
+# MAC: 60:01:94:1D:C8:24

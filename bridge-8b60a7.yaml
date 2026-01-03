@@ -1,0 +1,18 @@
+# Specific Device Configuration
+
+substitutions:
+    device_fn: "Bridge RF433"
+    device_lc: 8b60a7
+    full_mac: "8b:60:a7"
+    device_type: "BRIDGE"
+    config_version: "0.1.345"
+    pwr_mode: NONE
+    pwr_val: 18dB
+    ip_0: 192.168.0.33
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+    status_led_gpio: GPIO13  # used by status_led package
+    room: "desk"
+
+<<: !include devices/.sonoff.bridge.yaml

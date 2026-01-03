@@ -1,0 +1,18 @@
+# Specific Device Configuration
+
+substitutions:
+    device_fn: "Rice cooker"
+    device_lc: f972a7
+    full_mac: "5C:CF:7F:F9:72:A7"
+    device_type: "POW TH"
+    config_version: "0.1.351"
+    ip_0: 192.168.0.28  
+    pwr_mode: NONE
+    pwr_val: 18dB
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+    status_led_gpio: GPIO13  # used by status_led package
+    room: "cuisine"
+
+<<: !include .sonoff-th.yaml  

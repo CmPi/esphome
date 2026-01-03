@@ -2,33 +2,21 @@
 # @file ttgo32-2.yaml
 # @brief Specific Device Configuration
 # @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
 #
 
 substitutions:
-    device_model: "ttgo32"
-    device_fn: "TTGO-32-NAKED (TFT)"
-    device_sn: "ttgo32-2"
-    device_lc: "88ed10"
-    full_mac: "78:21:84:88:ed:10"
-    device_type: "TTGO-32"
-    config_version: "0.2.002"
-    ip_0: 192.168.0.45 
-    pwr_mode: NONE
-    pwr_val: 18dB
-    webe_api: !secret webe_api
-    webe_usrm: !secret webe_usrm    
-    webe_key: !secret webe_key
-    detected_flash_size: 4MB
-    room: chambre
-    # display
-    bw_only: false
-    bl_supported: 'true'
-    rotation: 90
-    # pages and menus
-    bs_select_gpio: GPIO00
-    bs_next_gpio: GPIO35
+  device_fn: "TTGO-32-NAKED (TFT)"
+  device_sn: "ttgo32-2"
+  device_lc: "88ed10"
+  full_mac: "78:21:84:88:ed:10"
+  ip_0: 192.168.0.45 
+  room: chambre
+  detected_flash_size: 4MB
+  rotation: 90
 
-<<: !include models/ttgo32.yaml   
+packages:
+  - !include models/ttgo32.yaml
 
 # Optional: Battery voltage sensor (if battery monitoring is connected)
 sensor:

@@ -1,0 +1,412 @@
+#
+# @file models/h801.yaml
+# @brief Device configuration for H801
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_type: "h801"
+  soc_type: "ESP8266"
+  pwr_mode: NONE
+  pwr_val: 18dB
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  config_version: "0.1.357"
+
+packages:
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include ../packages/min-info.yaml
+  - !include ../packages/webe.yaml
+
+esp8266:
+  board: esp01_1m
+  board_flash_mode: dout
+
+globals:
+  - id: emrg_on
+    type: bool
+    restore_value: false
+    initial_value: 'false'
+  - id: xmas_on
+    type: bool
+    initial_value: 'false'    
+  - id: p_r
+    type: float
+    restore_value: false
+    initial_value: '0.0'
+  - id: p_g
+    type: float
+    restore_value: false
+    initial_value: '0.0'
+  - id: p_b
+    type: float
+    restore_value: false
+    initial_value: '0.0'
+  - id: p_w
+    type: float
+    restore_value: false
+    initial_value: '0.0'
+  - id: p_br
+    type: float
+    restore_value: false
+    initial_value: '0.0'
+
+
+button:
+  # Progressive (3s) SWITCH ON
+  - platform: template
+    name: Soft ON
+    icon: mdi:power-on
+    on_press:
+      - script.execute: prog_on
+  - platform: template
+    name: Soft OFF
+    icon: mdi:power-off
+    on_press:
+      - script.execute: prog_off
+  # Emrgency/alert      
+  - platform: template
+    name: Alert ON
+    icon: mdi:alarm-light
+    on_press:
+      - lambda: id(emrg_on) = true; id(xmas_on) = true;
+      - script.execute: emrg_flash
+  - platform: template
+    name: Alert OFF
+    icon: mdi:alarm-light-off
+    on_press:
+      - lambda: id(emrg_on) = false;
+      - script.stop: emrg_flash
+      - light.turn_off: light_1
+  # GREEN (WhatsApp) Notification 
+  - platform: template
+    name: WhatsApp Notify
+    icon: mdi:whatsapp
+    on_press:
+      - lambda: |-
+          id(emrg_on) = false;
+          id(xmas_on) = false;
+          id(p_r) = 0.098;
+          id(p_g) = 0.788;
+          id(p_b) = 0.329;
+          id(p_w) = 0.0;
+          id(p_br) = 1.0;
+      - script.stop: emrg_flash
+      - script.execute: prog_on
+      - delay: 10s
+      - script.execute: prog_off
+  # BLUE (Signal) notification
+  - platform: template
+    name: Signal Notify
+    icon: mdi:signal
+    on_press:
+      - lambda: |-
+          id(emrg_on) = false;
+          id(xmas_on) = false;
+          id(p_r) = 0.157;
+          id(p_g) = 0.533;
+          id(p_b) = 0.961;
+          id(p_w) = 0.0;
+          id(p_br) = 1.0;
+      - script.stop: emrg_flash
+      - script.execute: prog_on
+      - delay: 10s
+      - script.execute: prog_off   
+  # R/G/B modes      
+  - platform: template
+    name: Blue
+    icon: mdi:palette
+    on_press:
+      - script.execute:
+          id: chg_color
+          r: 0.0
+          g: 0.0
+          b: 1.0
+          w: 0.0
+          br: 1.0
+  - platform: template
+    name: Red
+    icon: mdi:palette
+    on_press:
+      - script.execute:
+          id: chg_color
+          r: 1.0
+          g: 0.0
+          b: 0.0
+          w: 0.0
+          br: 1.0
+  - platform: template
+    name: Green
+    icon: mdi:palette
+    on_press:
+      - script.execute:
+          id: chg_color
+          r: 0.0
+          g: 1.0
+          b: 0.0
+          w: 0.0
+          br: 1.0
+  - platform: template
+    name: Bright White
+    icon: mdi:brightness-7
+    on_press:
+      - script.execute:
+          id: chg_color
+          r: 0.0
+          g: 0.0
+          b: 0.0
+          w: 1.0
+          br: 1.0
+  - platform: template
+    name: Warm White
+    icon: mdi:white-balance-sunny
+    on_press:
+      - script.execute:
+          id: chg_color
+          r: 1.0
+          g: 0.6
+          b: 0.2
+          w: 0.5
+          br: 0.8
+  - platform: template
+    name: 25% Brightness
+    icon: mdi:brightness-5
+    on_press:
+      - light.turn_on:
+          id: light_1
+          brightness: 0.25
+          transition_length: 1s
+  - platform: template
+    name: 50% Brightness
+    icon: mdi:brightness-6
+    on_press:
+      - light.turn_on:
+          id: light_1
+          brightness: 0.50
+          transition_length: 1s
+  - platform: template
+    name: 75% Brightness
+    icon: mdi:brightness-6
+    on_press:
+      - light.turn_on:
+          id: light_1
+          brightness: 0.75
+          transition_length: 1s
+  - platform: template
+    name: 100% Brightness
+    icon: mdi:brightness-7
+    on_press:
+      - light.turn_on:
+          id: light_1
+          brightness: 1.0
+          transition_length: 1s
+  - platform: template
+    name: Auto-off 5min
+    icon: mdi:timer-off
+    on_press:
+      - delay: 300s
+      - script.execute: prog_off
+  - platform: template
+    name: Auto-off 15min
+    icon: mdi:timer-off
+    on_press:
+      - delay: 900s
+      - script.execute: prog_off
+  - platform: template
+    name: Auto-off 30min
+    icon: mdi:timer-off
+    on_press:
+      - delay: 1800s
+      - script.execute: prog_off
+  - platform: template
+    name: Christmas
+    icon: mdi:pine-tree
+    on_press:
+      - lambda: id(emrg_on) = false;
+      - script.stop: emrg_flash
+      - script.execute: xmas
+
+output:
+  - platform: esp8266_pwm
+    pin: 12
+    frequency: 1000 Hz
+    id: pwm_b
+  - platform: esp8266_pwm
+    pin: 13
+    frequency: 1000 Hz
+    id: pwm_g
+  - platform: esp8266_pwm
+    pin: 15
+    frequency: 1000 Hz
+    id: pwm_r
+  - platform: esp8266_pwm
+    pin: 14
+    frequency: 1000 Hz
+    id: pwm_w1
+  - platform: esp8266_pwm
+    pin: 4
+    frequency: 1000 Hz
+    id: pwm_w2
+
+light:
+  - platform: rgbw
+    id: light_1
+    name: Light
+    red: pwm_r
+    green: pwm_g
+    blue: pwm_b
+    white: pwm_w1
+    restore_mode: ALWAYS_OFF
+    gamma_correct: 2.8
+    default_transition_length: 1s
+
+script:
+  - id: !extend declare_config
+    then: 
+      - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+  - id: !extend process_json
+    then:
+      - lambda: |-
+          std::string body = id(http_rsp_body);
+          if (body.find("\"cmd\":\"off\"") != std::string::npos) {
+            id(light_1).turn_off().perform();
+          }
+          else if (body.find("\"cmd\":\"on\"") != std::string::npos) {
+            id(light_1).turn_on().set_brightness(1.0).perform();
+          }
+          else if (body.find("\"cmd\":\"blue\"") != std::string::npos) {
+            id(light_1).turn_on().set_brightness(1.0).set_rgb(0.0, 0.0, 1.0).set_white(0.0).perform();
+          }
+    mode: single     
+  - id: emrg_flash
+    then:
+      - while:
+          condition:
+            lambda: 'return id(emrg_on);'
+          then:
+            - light.turn_on:
+                id: light_1
+                brightness: 100%
+                red: 100%
+                green: 0%
+                blue: 0%
+                white: 0%
+                transition_length: 0.1s
+            - delay: 0.5s
+            - light.turn_on:
+                id: light_1
+                brightness: 100%
+                red: 0%
+                green: 0%
+                blue: 100%
+                white: 0%
+                transition_length: 0.1s
+            - delay: 0.5s
+    mode: single
+  - id: prog_on
+    then:
+      - light.turn_on:
+          id: light_1
+          brightness: 1%
+          red: !lambda 'return id(p_r);'
+          green: !lambda 'return id(p_g);'
+          blue: !lambda 'return id(p_b);'
+          white: !lambda 'return id(p_w);'
+          transition_length: 0s
+      - light.turn_on:
+          id: light_1
+          brightness: !lambda 'return id(p_br);'
+          transition_length: 5s
+    mode: single
+  - id: prog_off
+    then:
+      - light.turn_on:
+          id: light_1
+          brightness: 1%
+          transition_length: 3s
+      - delay: 5s
+      - light.turn_off:
+          id: light_1
+    mode: single
+  - id: chg_color
+    mode: restart
+    parameters:
+      r: float
+      g: float
+      b: float
+      w: float
+      br: float
+    then:
+      - lambda: id(emrg_on) = false;
+      - script.stop: emrg_flash
+      - if:
+          condition:
+            light.is_on: light_1
+          then:
+            - light.turn_on:
+                id: light_1
+                brightness: 0.01
+                transition_length: 3s
+            - delay: 3s
+      - lambda: |-
+          id(p_r) = r;
+          id(p_g) = g;
+          id(p_b) = b;
+          id(p_w) = w;
+          id(p_br) = br;
+      - script.execute: prog_on    
+
+  - id: xmas
+    mode: single
+    then:
+      - lambda: id(xmas_on) = true;
+      - while:
+          condition:
+            lambda: return id(xmas_on);
+          then:
+            - light.turn_on:
+                id: light_1
+                brightness: 0.9
+                red: 1.0
+                green: 0.0
+                blue: 0.0
+                white: 0.0
+                transition_length: 800ms
+            - delay: 2s
+            - light.turn_on:
+                id: light_1
+                brightness: 0.9
+                red: 0.0
+                green: 0.8
+                blue: 0.0
+                white: 0.0
+                transition_length: 800ms
+            - delay: 2s
+            - light.turn_on:
+                id: light_1
+                brightness: 0.9
+                red: 1.0
+                green: 1.0
+                blue: 1.0
+                white: 0.0
+                transition_length: 800ms
+            - delay: 2s
+            - light.turn_on:
+                id: light_1
+                brightness: 0.9
+                red: 1.0
+                green: 0.65
+                blue: 0.0
+                white: 0.0
+                transition_length: 800ms
+            - delay: 2s      
+
+logger:
+  <<: !include ../keys/logger.none.yaml
+
+mdns:
+  disabled: true

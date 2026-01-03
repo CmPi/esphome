@@ -1,0 +1,91 @@
+#
+# @file models/sonoff-basic-r1.yaml
+# @brief Specific Configuration for a H801 device having ${full_mac} address
+# @author CmPi <cmpi@webe.fr>
+# @date creation 2026-01-03
+#
+
+substitutions:
+  device_type: "basic"
+  config_version: "0.2.002"
+  pwr_mode: NONE
+  pwr_val: 18dB
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  status_led_gpio: GPIO13  # used by status_led package
+
+esphome:
+  <<: !include .def.esphome.common.yaml
+  platformio_options:
+    board_build.ldscript: eagle.flash.1m.ld
+    build_flags:
+      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY  
+
+<<: !include .def.common.yaml
+
+esp8266:
+  board: esp01_1m
+  board_flash_mode: dout
+  early_pin_init: false
+
+packages:
+  - !include packages/min-info.yaml
+  - !include packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
+  - !include packages/webe.yaml
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    id: button_1
+    name: "Button"
+    on_press:
+      then:
+        - switch.toggle: relay
+#  - platform: gpio
+#    pin:
+#     number: GPIO14
+#     mode:
+#       input: true
+#       pullup: true
+#     inverted: true
+#   id: button_2
+#   name: "internal button"
+# - platform: status
+#   name: "status"
+    
+output:
+  - id: o_relay
+    platform: gpio
+    pin: GPIO12
+  - id: !extend o_led    
+    platform: gpio
+    pin:
+      number: GPIO13
+      inverted: true
+    
+# Relay switch using output
+switch:
+  - id: relay
+    platform: output
+    name: "Relay"
+    output: o_relay
+    on_turn_on:
+      - script.execute: status_led_blinkx3
+    # - script.execute: report_state
+    on_turn_off:
+      - script.execute: status_led_blinkx3 
+    # - script.execute: report_state         
+
+logger:
+  <<: !include .logger.none.yaml
+  
+mdns:
+  disabled: true
+
+  

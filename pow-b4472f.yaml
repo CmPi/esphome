@@ -1,0 +1,15 @@
+#
+# @file cam-2.yaml
+# @brief Specific Device Configuration
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_fn: "TV and Home Cinema"
+  device_lc: b4472f
+  ip_0: 192.168.0.27  
+  room: "desk"
+
+packages:
+  - !include models/sonoff-pow.yaml            

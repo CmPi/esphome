@@ -6,13 +6,13 @@
 #
 
 substitutions:
-    device_model: "rd"
-    soc_type: "ESP32S3"
-    config_version: "0.1.002"
-    pwr_mode: NONE
-    pwr_val: 20dB
-    detected_flash_size: 16MB
-    ws2812_led_gpio: GPIO48  # used by rgb_led package
+  device_type: "rd"
+  soc_type: "ESP32S3"
+  config_version: "0.1.002"
+  pwr_mode: NONE
+  pwr_val: 20dB
+  detected_flash_size: 16MB
+  ws2812_led_gpio: GPIO48  # used by rgb_led package
 
 esp32:
   board: esp32-s3-devkitm-1
@@ -35,13 +35,4 @@ packages:
   - !include ../packages/wifi-mdns.yaml
   - !include ../packages/api-ota.yaml    
   - !include ../packages/sys-info.yaml    
-
-light:
-  - platform: esp32_rmt_led_strip
-    id: l_rgb
-    rgb_order: GRB
-    pin: GPIO48       # Change this to your WS2812 data pin
-    num_leds: 1       # Number of LEDs in your strip
-    chipset: WS2812
-    name: "LED RGB"
-
+  - !include ../packages/led-rgb-ws2812.yaml    

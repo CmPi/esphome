@@ -1,0 +1,17 @@
+#
+# @file h801-1aac90.yaml
+# @brief Specific Configuration for a H801 device having ${full_mac} address
+# @author CmPi <cmpi@webe.fr>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_fn: "HRZ RGB leds"
+  device_lc: "1aac90"
+  ip_0: 192.168.0.32   
+  room: "desk"
+    
+packages:
+  - !include models/h801.yaml
+
+# MAC: A0:20:A6:1A:AC:90

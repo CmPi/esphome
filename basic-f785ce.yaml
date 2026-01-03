@@ -1,0 +1,17 @@
+#
+# @file basic-f785ce.yaml
+# @brief Specific Configuration for a H801 device having ${full_mac} address
+# @author CmPi <cmpi@webe.fr>
+# @date creation 2026-01-03
+#
+
+substitutions:
+    device_fn: "Eventail"
+    device_lc: "f785ce"
+    ip_0: 192.168.0.23   
+    room: "desk"
+    
+packages:
+  - !include models/sonoff-basic-r1.yaml            
+
+# MAC: DC:4F:22:F7:85:CE
