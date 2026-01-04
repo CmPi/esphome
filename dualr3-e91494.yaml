@@ -1,15 +1,18 @@
-# Specific Device Configuration
+#
+# @file basic-bc4a5d.yaml
+# @brief Specific Configuration for a Sonoff DUAL R3 device which MAC address ends by ${device_lc}
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-03
+#
 
 substitutions:
     device_fn: "DUAL R3 V2.0"
     device_lc: e91494
-    full_mac: "C8:F0:9E:E9:14:94"
-    device_type: "R3V2"
-    config_version: "0.1.338"
     ip_0: 192.168.0.199  
-    webe_api: !secret webe_api
-    webe_usrm: !secret webe_usrm    
-    webe_key: !secret webe_key
+    room: "chambre"
 
 packages:
   - !include models/sonoff-dualr3.yaml
+
+
+# MAC: C8:F0:9E:E9:14:94  

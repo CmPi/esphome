@@ -282,9 +282,10 @@ void drawBottomBoxes(
     float fHumidity,
     float fPression
 ) {
-    // ----- Configuration -----
-    const int Y_TOP = 106;           // Y position of top of boxes
+    // ----- Configuration (dynamic based on screen height) -----
+    int screenHeight = it.get_height();
     const int BOX_HEIGHT = 22;       // Box height
+    const int Y_TOP = screenHeight - BOX_HEIGHT;  // Position boxes at bottom of screen
     const int ICON_TEXT_SPACING = 6; // Spacing between icon and text
     const int BOX_PADDING_H = 4;     // Horizontal padding inside each box
     const int SCREEN_MARGIN = 0;     // No margin needed - borders at x=0 are visible
@@ -606,6 +607,16 @@ void drawTimeAndDate(
     esphome::time::RealTimeClock *pTime
 ) {
     int iScreenWidth = it.get_width();
+    int iScreenHeight = it.get_height();
+    
+    // Calculate Y positions dynamically (proportional to screen height)
+    // For 128px height: time at 22-51, date at 50-65
+    // Scale proportionally for other heights
+    int time_y1 = (22 * iScreenHeight) / 128;
+    int time_y2 = (51 * iScreenHeight) / 128;
+    int date_y1 = (50 * iScreenHeight) / 128;
+    int date_y2 = (65 * iScreenHeight) / 128;
+    
     std::string time_str = "~~:~~:~~";
     std::string date_str = "~~/~~/~~~~";
     if (pTime != nullptr) {
@@ -615,8 +626,8 @@ void drawTimeAndDate(
             date_str = now.strftime("%d/%m/%Y");
         }
     }
-    drawDsegText(it, 0, iScreenWidth - 1, 22, 51, pFontTime, time_str, Color(0xff7f00));
-    drawDsegText(it, 0, iScreenWidth - 1, 50, 65, pFontDate, date_str, Color(0xff7f00));
+    drawDsegText(it, 0, iScreenWidth - 1, time_y1, time_y2, pFontTime, time_str, Color(0xff7f00));
+    drawDsegText(it, 0, iScreenWidth - 1, date_y1, date_y2, pFontDate, date_str, Color(0xff7f00));
 }
 
 /**
@@ -644,8 +655,28 @@ void drawWeatherAndMoon(
     esphome::time::RealTimeClock *pTime
 ) {
     int screenW = it.get_width();
+    int screenH = it.get_height();
 
-    if (pWeatherCondition == nullptr || !pWeatherCondition->has_state() || pWeatherCondition->state == "") return;
+    // Debug: Log sensor states
+    if (pWeatherCondition == nullptr) {
+        ESP_LOGW("weather", "pWeatherCondition is nullptr");
+    } else if (!pWeatherCondition->has_state()) {
+        ESP_LOGW("weather", "pWeatherCondition has no state yet");
+    } else if (pWeatherCondition->state == "") {
+        ESP_LOGW("weather", "pWeatherCondition state is empty");
+    }
+
+    // If no weather data, show a placeholder instead of returning silently
+    if (pWeatherCondition == nullptr || !pWeatherCondition->has_state() || pWeatherCondition->state == "") {
+        // Calculate Y positions dynamically
+        int icon_y = (75 * screenH) / 128;
+        int text_y = (100 * screenH) / 128;
+        int cx = screenW / 2;
+        // Draw N/A placeholder
+        it.print(cx, icon_y, pFontWeather, Color(0x888888), esphome::display::TextAlign::CENTER, "\uf141");
+        it.print(cx, text_y, pFontMicro, Color(0x888888), esphome::display::TextAlign::CENTER, "No weather data");
+        return;
+    }
     std::string cond = pWeatherCondition->state;
 
     // Decide night: prefer explicit 'night' in condition, else fallback to local hour
@@ -737,11 +768,18 @@ void drawWeatherAndMoon(
         icon = day_icon;
     }
 
+    // Calculate Y positions dynamically based on screen height
+    // For 128px: icon at 75, text at 100. Scale proportionally.
+    // screenH already declared at function start
+    int icon_y = (75 * screenH) / 128;
+    int text_y = (100 * screenH) / 128;
+    int moon_y = (80 * screenH) / 128;
+    
     if (!is_night) {
         // Day: single symbol centered
         int cx = screenW / 2;
-        it.print(cx, 75, pFontWeather, icon_color, esphome::display::TextAlign::CENTER, icon);
-        it.print(cx, 100, pFontMicro, Color(0x00ff00), esphome::display::TextAlign::CENTER, cond.c_str());
+        it.print(cx, icon_y, pFontWeather, icon_color, esphome::display::TextAlign::CENTER, icon);
+        it.print(cx, text_y, pFontMicro, Color(0x00ff00), esphome::display::TextAlign::CENTER, cond.c_str());
     } else {
         // Night: weather (left) and moon (right). For clear nights we avoid
         // drawing a weather icon on the left because the moon is shown on
@@ -757,7 +795,7 @@ void drawWeatherAndMoon(
 
         // Always draw the centered condition text so the condition is visible
         // in all layouts (day, night split, or clear-night with moon).
-        it.print(center_cx, 100, pFontMicro, Color(0x00ff00), esphome::display::TextAlign::CENTER, cond.c_str());
+        it.print(center_cx, text_y, pFontMicro, Color(0x00ff00), esphome::display::TextAlign::CENTER, cond.c_str());
 
         // Draw icons:
         // - If draw_first == true: draw first icon at first_cx and moon at second_cx
@@ -765,20 +803,24 @@ void drawWeatherAndMoon(
         //   a right-only moon at second_cx)
         if (draw_first) {
             // first (weather) icon
-            it.print(first_cx, 80, pFontWeather, icon_color, esphome::display::TextAlign::CENTER, icon);
+            it.print(first_cx, moon_y, pFontWeather, icon_color, esphome::display::TextAlign::CENTER, icon);
             // second (moon) icon from moon phase sensor if present
-                if (pMoonPhaseIcon != nullptr && pMoonPhaseIcon->has_state() && pMoonPhaseIcon->state != "") {
+            if (pMoonPhaseIcon != nullptr && pMoonPhaseIcon->has_state() && pMoonPhaseIcon->state != "") {
                 const char *moon_icon = pMoonPhaseIcon->state.c_str();
-                it.print(second_cx, 80, pFontWeather, Color(0xFFFF00), esphome::display::TextAlign::CENTER, moon_icon);
+                it.print(second_cx, moon_y, pFontWeather, Color(0xFFFF00), esphome::display::TextAlign::CENTER, moon_icon);
+            } else {
+                const char *fallback_na = "\uf141"; // N/A ellipsis glyph
+                it.print(second_cx, moon_y, pFontWeather, Color(0xFFFF00), esphome::display::TextAlign::CENTER, fallback_na);
             }
         } else {
             // Only moon — center it so it's not a "right-only" symbol
             if (pMoonPhaseIcon != nullptr && pMoonPhaseIcon->has_state() && pMoonPhaseIcon->state != "") {
                 const char *moon_icon = pMoonPhaseIcon->state.c_str();
-                it.print(center_cx, 80, pFontWeather, Color(0xFFFF00), esphome::display::TextAlign::CENTER, moon_icon);
+                it.print(center_cx, moon_y, pFontWeather, Color(0xFFFF00), esphome::display::TextAlign::CENTER, moon_icon);
             } else {
-                // Fallback: draw the normalized icon (e.g., moon glyph) centered
-                it.print(center_cx, 80, pFontWeather, icon_color, esphome::display::TextAlign::CENTER, icon);
+                // Fallback: draw the N/A ellipsis glyph centered
+                const char *fallback_na = "\uf141"; // N/A ellipsis glyph
+                it.print(center_cx, moon_y, pFontWeather, Color(0xFFFF00), esphome::display::TextAlign::CENTER, fallback_na);
             }
         }
     }

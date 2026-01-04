@@ -1,7 +1,26 @@
-esphome:
-  <<: !include .def.esphome.common.yaml
+#
+# @file sonoff-dualr3.yaml
+# @brief Common Configuration for Sonoff DUAL R3 devices
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-04
+#
 
-<<: !include .def.common.yaml
+substitutions:
+  device_type: "r3v2"
+  board: "esp32dev"
+  pwr_mode: LIGHT
+  pwr_val: 18dB
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  detected_flash_size: 4MB
+  config_version: "0.2.004"
+
+packages:
+  - !include ../packages/esphome.dio.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml
+  - !include ../packages/no-webe.yaml
 
 # Do not add BLuetooth tracker!
 
@@ -15,10 +34,6 @@ globals:
       type: std::string
       restore_value: no    
       
-text_sensor:
-  - <<: !include .text_sensor.wifi_info.mini.yaml
-  - <<: !include .text_sensor.version.yaml        
-
 uart:
   tx_pin: GPIO25
   rx_pin: GPIO26
@@ -27,9 +42,6 @@ uart:
   stop_bits: 2
 
 sensor:  
-  - <<: !include .sensor.uptime.yaml
-  - <<: !include .sensor.wifi_signal.yaml
-  - <<: !include .sensor.cpu_temperature.yaml  
   - platform: bl0939
     update_interval: 10s
     voltage:
@@ -50,9 +62,6 @@ sensor:
       name: 'Energy 2'
     energy_total:
       name: 'Energy Total'
-
-button:
-  - <<: !include .button.restart.yaml
 
 light:
   - platform: status_led
@@ -130,12 +139,6 @@ binary_sensor:
 #    mac_address: 00:02:3C:26:6A:02  # your watch or phone BLE MAC
 #    name: "T12 Presence"         
       
-script:
-    - id: declare_config
-      then: 
-        - !include { file: .script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
-    - id: report_uptime
-      then: !include { file: .component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
       
 logger:
   level: ERROR
