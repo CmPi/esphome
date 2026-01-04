@@ -1,0 +1,18 @@
+#
+# @file esp32-micro-5x5.yaml
+# @brief Specific Device Configuration
+# @author CmPi <cmpi@webe.fr>
+#
+
+substitutions:
+    device_fn: "ESP32-5x5"
+    device_lc: "a112d4"
+    full_mac: "84:f7:03:a1:12:d4"
+    device_type: "ESP32-C3"
+    config_version: "0.1.299"
+    ip_0: 192.168.0.242
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+
+<<: !include .device.esp32-micro-5x5.yaml  

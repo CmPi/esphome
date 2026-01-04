@@ -1,9 +1,24 @@
 # === === Template for SONOFF MINIR R4
 
-esphome:
-  <<: !include .def.esphome.noboot.yaml
+substitutions:
+  device_type: "mini-r4"
+  board: "esp32dev"
+  soc_type: "ESP32"
+  pwr_mode: LIGHT
+  pwr_val: 20dB
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  detected_flash_size: 4MB
+  config_version: "0.1.004"
 
-<<: !include .def.common.yaml
+packages:
+  - !include ../packages/esphome.dio.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml
+  - !include ../packages/net-info.yaml
+  - !include ../packages/sys-info.yaml
+  - !include ../packages/webe.yaml
 
 esp32:
   board: esp32dev
@@ -22,11 +37,6 @@ esp32_ble_tracker:
 
 bluetooth_proxy:
   active: true    
-
-globals:
-    - id: http_rsp_body
-      type: std::string
-      restore_value: no
 
 # === SENSORS
 
@@ -51,7 +61,7 @@ binary_sensor:
       - switch.toggle: relay
 
 sensor:
-  - <<: !include .sensor.uptime.yaml
+  - <<: !include ../keys/sensor.uptime.yaml
 
 output:
   - platform: gpio
@@ -71,31 +81,19 @@ switch:
     id: relay
     restore_mode: ALWAYS_OFF
 
-# Status LED as Light
-light:
-  - <<: !include .light.status_led.yaml
-
 script:
-    - id: declare_config
+    - id: !extend declare_config
       then: 
-        - !include { file: .register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+        - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
         - delay: 10s
-        - !include { file: .register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }  
-    - id: report_uptime
+        - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }  
+    - id: !extend report_uptime
       then:
-        - !include { file: .component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+        - !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
         - delay: 10s
-        - !include { file: .component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }  
-    - id: process_json
+        - !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }  
+    - id: !extend process_json
       then:
         - delay: 1ms
       mode: single    
 
-debug:
-  update_interval: 60s
-
-logger:
-  level: INFO
-
-mdns:
-  disabled: false

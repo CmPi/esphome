@@ -1,0 +1,7 @@
+- platform: debug
+  device:
+    name: "Device Info"
+    entity_category: diagnostic
+  reset_reason:
+    name: "Reset Reason"
+    entity_category: diagnostic

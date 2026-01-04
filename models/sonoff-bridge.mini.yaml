@@ -1,13 +1,14 @@
-#
-# @file packages/wifi-mdns.yaml
-# @brief Common WiFi and mDNS configuration package
-# @author CmPi <github.com/CmPi>
-# @date creation 2026-01-02
-#
+esphome:
+  name: $device_lc
+  friendly_name: $device_fn
+  project:
+    name: "CmPi.MyEhThings"
+    version: $config_version
+
+# Wifi settings (for Prague)
 
 wifi:
-  id: n_main
-  reboot_timeout: 24h
+  reboot_timeout: 0s
   fast_connect: true
   min_auth_mode: WPA  
   power_save_mode: ${pwr_mode}
@@ -24,8 +25,25 @@ wifi:
     gateway: 192.168.0.1
     # The subnet of the network. 255.255.255.0 works for most home networks.
     subnet: 255.255.255.0    
-    dns1: 1.1.1.1        # Cloudflare DNS 
-    dns2: 8.8.8.8        # Cloudflare DNS 
-      
+    dns1: 8.8.8.8        # Google DNS
+    dns2: 1.1.1.1        # Cloudflare DNS 
+
+api:
+  encryption:
+    key: !secret api_key
+  reboot_timeout: 0s  # Prevents "unavailable" status    
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+    
+esp8266:
+  board: esp01_1m
+  board_flash_mode: dout
+
+logger:
+  baud_rate: 0  
+  level: NONE
+  
 mdns:
   disabled: true

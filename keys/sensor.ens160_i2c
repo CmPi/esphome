@@ -1,0 +1,31 @@
+
+
+
+sensor:
+  # --- ENS160 Air Quality Sensor ---
+  - platform: ens160_i2c
+    address: 0x53
+    eco2:
+      name: "eCO₂"
+      device_class: carbon_dioxide
+      state_class: measurement
+      unit_of_measurement: "ppm"
+      accuracy_decimals: 0
+      icon: "mdi:molecule-co2"
+    tvoc:
+      name: "TVOC"
+      device_class: volatile_organic_compounds
+      state_class: measurement
+      unit_of_measurement: "ppb"
+      accuracy_decimals: 0
+      icon: "mdi:chemical-weapon"
+    aqi:
+      name: "AQI"
+      device_class: aqi
+      state_class: measurement
+      accuracy_decimals: 0
+      icon: "mdi:air-filter"
+    compensation:
+      temperature: aht_temperature
+      humidity: aht_humidity
+    update_interval: 15s

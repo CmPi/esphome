@@ -22,7 +22,8 @@ packages:
 # Manufacturer: ef
 # Device: 4018
 # Status value: 0x600200
-# Detected flash size: 16MB
+# Detected flash size: 16MB - Flash Device : 16 MB - Winbond W25Q128 (128 Mbit)
+# Pontage USB : Espressif Systems - ESP32 Native USB (0x1001)
 
 # IOO - LCD_DC
 # IO1 - 

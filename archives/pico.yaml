@@ -1,0 +1,41 @@
+esphome:
+  name: pico_w_no_wifi_screen
+
+rp2040:
+  board: rpipicow
+
+# Wi-Fi disabled: comment out the wifi block
+# wifi:
+#   ssid: !secret wifi_ssid
+#   password: !secret wifi_password
+
+logger:
+  level: DEBUG  # serial output via USB
+
+# No OTA / API → USB only
+# api:
+#   password: !secret api_password
+# ota:
+#   password: !secret ota_password
+
+i2c:
+  sda: GPIO4
+  scl: GPIO5
+  scan: true
+  id: bus_a
+
+font:
+  - id: f_micro_8
+    file: "fonts/spleen-5x8.bdf"
+    glyphs: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/:~-°.%, "
+
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    id: oled
+    rotation: 0
+    address: 0x3C
+    update_interval: 500ms
+    lambda: |-
+      it.print(0, 0, id(f_micro_8), "Hello Pico W!");
+      it.printf(0, 20, id(f_micro_8), "Time: %.1f", millis() / 1000.0);

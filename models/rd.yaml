@@ -8,11 +8,14 @@
 substitutions:
   device_type: "rd"
   soc_type: "ESP32S3"
-  config_version: "0.1.002"
   pwr_mode: NONE
   pwr_val: 20dB
   detected_flash_size: 16MB
   ws2812_led_gpio: GPIO48  # used by rgb_led package
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  config_version: "0.1.004"
 
 esp32:
   board: esp32-s3-devkitm-1
@@ -34,5 +37,7 @@ packages:
   - !include ../packages/esphome.dio.yaml
   - !include ../packages/wifi-mdns.yaml
   - !include ../packages/api-ota.yaml    
+  - !include ../packages/min-info.yaml    
   - !include ../packages/sys-info.yaml    
   - !include ../packages/led-rgb-ws2812.yaml    
+  - !include ../packages/webe.yaml

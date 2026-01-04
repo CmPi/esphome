@@ -12,7 +12,7 @@ substitutions:
   room: "desk"
     
 packages:
-  - !include models/sonoff-pow.yaml            
+  - !include models/sonoff-pow.mini.yaml            
 
 # Info via ESPHOME/HA
 

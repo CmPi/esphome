@@ -1,0 +1,25 @@
+#
+# @file models/sonoff-pow.yaml
+# @brief common part of a TTGO
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_type: "pow"
+  board: esp01_1m
+  soc_type: "ESP8266"
+  pwr_mode: NONE
+  pwr_val: 18dB
+  config_version: "0.2.002"
+
+packages:
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/ota.yaml    
+
+logger:
+  <<: !include ../keys/logger.none.yaml
+
+mdns:
+  disabled: true

@@ -76,3 +76,13 @@ script:
     then:
     - delay: 1ms
     mode: single     
+
+
+#    - id: !extend process_json
+#      then:
+#        - lambda: |-
+#            json::parse_json(id(http_rsp_body), [](JsonObject root)->bool {
+#              if (!root.isNull()) {
+#              }
+#             return true;
+#            });

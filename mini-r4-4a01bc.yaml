@@ -3,12 +3,9 @@
 substitutions:
     device_fn: "MINI R4"
     device_lc: 4a01bc
-    device_type: "MINI R4"
     config_version: 0.1.293
     ip_0: 192.168.0.65   
-    webe_api: !secret webe_api
-    webe_usrm: !secret webe_usrm    
-    webe_key: !secret webe_key
+    room: "cuisine"
 
 packages:
   - !include models/mini-r4.yaml

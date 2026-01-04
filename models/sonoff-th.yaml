@@ -1,0 +1,68 @@
+#
+# @file models/sonoff-s20.yaml
+# @brief Device configuration for Mini TV
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_type: "th"
+  board: esp01_1m
+  soc_type: "ESP8266"
+  pwr_mode: NONE
+  pwr_val: 18dB
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  status_led_gpio: GPIO13  # used by status_led package
+  config_version: "0.2.002"
+
+packages:
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include ../packages/min-info.yaml
+  - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
+  - !include ../packages/webe.yaml
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Button"
+    on_press:
+      - switch.toggle: fakebutton
+    
+one_wire:
+  - platform: gpio
+    pin: GPIO14
+
+sensor:
+  - platform: dallas_temp
+    name: temperature
+    icon: "mdi:thermometer"
+    update_interval: 120s
+    id: temp
+
+switch:
+  - platform: template
+    name: "Relay"
+    optimistic: true
+    id: fakebutton
+    restore_mode: DISABLED
+    turn_on_action:
+      - switch.turn_on: relay
+      - light.turn_on: l_led
+    turn_off_action:
+      - switch.turn_off: relay
+      - light.turn_off: l_led   
+  - platform: gpio
+    id: relay
+    pin: GPIO12
+
+script:
+    - id: !extend declare_config
+      then:
+        - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }

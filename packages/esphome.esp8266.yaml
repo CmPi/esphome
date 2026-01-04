@@ -22,4 +22,4 @@ esphome:
 esp8266:
   board: ${board}
   board_flash_mode: dout
-
+  

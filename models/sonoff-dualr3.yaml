@@ -1,0 +1,149 @@
+esphome:
+  <<: !include .def.esphome.common.yaml
+
+<<: !include .def.common.yaml
+
+# Do not add BLuetooth tracker!
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf  
+    
+globals:
+    - id: http_rsp_body
+      type: std::string
+      restore_value: no    
+      
+text_sensor:
+  - <<: !include .text_sensor.wifi_info.mini.yaml
+  - <<: !include .text_sensor.version.yaml        
+
+uart:
+  tx_pin: GPIO25
+  rx_pin: GPIO26
+  baud_rate: 4800
+  parity: NONE
+  stop_bits: 2
+
+sensor:  
+  - <<: !include .sensor.uptime.yaml
+  - <<: !include .sensor.wifi_signal.yaml
+  - <<: !include .sensor.cpu_temperature.yaml  
+  - platform: bl0939
+    update_interval: 10s
+    voltage:
+      name: 'Voltage'
+    current_1:
+      name: 'Current 1'
+      id: 'open_current_sensor'
+    current_2:
+      name: 'Current 2'
+      id: 'close_current_sensor'
+    active_power_1:
+      name: 'Active Power 1'
+    active_power_2:
+      name: 'Active Power 2'
+    energy_1:
+      name: 'Energy 1'
+    energy_2:
+      name: 'Energy 2'
+    energy_total:
+      name: 'Energy Total'
+
+button:
+  - <<: !include .button.restart.yaml
+
+light:
+  - platform: status_led
+    name: "LED"
+    id: led_status
+    pin:
+      number: GPIO13
+      inverted: True
+    internal: True
+
+switch:
+  - platform: gpio
+    name: "1"
+    pin: GPIO27
+    id: relay_1
+
+  - platform: gpio
+    name: "2"
+    pin: GPIO14
+    id: relay_2
+
+binary_sensor:
+  - platform: gpio
+    name: "Button"
+    id: sensor_button
+    pin:
+      number: GPIO00
+      mode:
+        input: True
+        pullup: True
+      inverted: True
+    disabled_by_default: True
+    icon: 'mdi:radiobox-blank'
+    filters:
+      - delayed_on: 50ms
+    on_press:
+      - switch.toggle: relay_1
+
+  - platform: gpio
+    name: "1"
+    pin:
+      number: GPIO32
+      mode:
+        input: True
+        pullup: True
+      inverted: True
+    filters:
+      - delayed_on_off: 50ms
+    on_press:
+      - switch.turn_on: relay_1
+    on_release:
+      - switch.turn_off: relay_1
+
+  - platform: gpio
+    name: "2"
+    pin:
+      number: GPIO33
+      mode:
+        input: True
+        pullup: True
+      inverted: True
+    filters:
+      - delayed_on_off: 50ms
+    on_press:
+      - switch.turn_on: relay_2
+    on_release:
+      - switch.turn_off: relay_2
+#  - platform: ble_presence
+#    mac_address: E8:6F:C6:AA:7F:91  # your watch or phone BLE MAC
+#    name: "Christophe's Watch Presence"      
+#  - platform: ble_presence
+#    mac_address: AA:BB:CC:DD:EE:01  # your watch or phone BLE MAC
+#    name: "Christophe's Phone Presence"      
+#  - platform: ble_presence
+#    mac_address: 00:02:3C:26:6A:02  # your watch or phone BLE MAC
+#    name: "T12 Presence"         
+      
+script:
+    - id: declare_config
+      then: 
+        - !include { file: .script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+    - id: report_uptime
+      then: !include { file: .component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+      
+logger:
+  level: ERROR
+  baud_rate: 0  # disable UART logging
+  
+mdns:
+  disabled: true      
+      
+      
+      
+      

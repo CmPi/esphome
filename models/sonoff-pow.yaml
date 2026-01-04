@@ -9,13 +9,13 @@ substitutions:
   device_type: "pow"
   board: esp01_1m
   soc_type: "ESP8266"
-  config_version: "0.2.002"
   pwr_mode: NONE
   pwr_val: 18dB
   webe_api: !secret webe_api
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
   status_led_gpio: GPIO15  # used by status_led package
+  config_version: "0.2.002"
 
 packages:
   - !include ../packages/esphome.esp8266.yaml
@@ -23,7 +23,7 @@ packages:
   - !include ../packages/api-ota.yaml    
   - !include ../packages/min-info.yaml
   - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
-  - !include ../packages/webe.yaml
+  - !include ../packages/no-webe.yaml
 
 binary_sensor:
   - platform: gpio
@@ -39,9 +39,9 @@ binary_sensor:
     filters:
       - delayed_off: 15s
     lambda: |-
-      if (isnan(id(power).state)) {
+      if (isnan(id(s_power).state)) {
         return {};
-      } else if (id(power).state > 4) {
+      } else if (id(s_power).state > 4) {
         return true;
       } else {
         return false;
@@ -52,14 +52,15 @@ sensor:
     sel_pin: 5
     cf_pin: 14
     cf1_pin: 13
-    update_interval: 10s
+    change_mode_every: 8
+    update_interval: 30s
     current:
       name: "Current"
     voltage:
       name: "Voltage"
     power:
       name: "Power"
-      id: power
+      id: s_power
       on_value_range:
         - above: 4.0
           then:
@@ -67,6 +68,13 @@ sensor:
         - below: 3.0
           then:
             - light.turn_off: l_led
+    energy:
+      name: "Total Energy"
+      id: total_energy_sensor
+      unit_of_measurement: kWh
+      accuracy_decimals: 3
+      filters:
+        - multiply: 0.001 # AJOUTEZ CECI POUR LE DASHBOARD ENERGY
 
 switch:
   - platform: template
@@ -84,21 +92,13 @@ switch:
     id: relay
     pin: GPIO12
 
-script:
-    - id: !extend declare_config
-      then: 
-        - !include { file: .script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
-    - id: !extend process_json
-      then:
-        - lambda: |-
-            json::parse_json(id(http_rsp_body), [](JsonObject root)->bool {
-              if (!root.isNull()) {
-              }
-              return true;
-            });      
+#script:
+#    - id: !extend declare_config
+#      then: 
+#        - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
 
 logger:
-  <<: !include .logger.error.yaml
+  <<: !include ../keys/logger.error.yaml
 
 mdns:
   disabled: true

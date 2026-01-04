@@ -1,0 +1,6 @@
+esphome:
+  <<: !include .def.esphome.common.yaml
+
+<<: !include .def.common.yaml
+<<: !include .wifi-api-ota.yaml
+

@@ -1,0 +1,351 @@
+#
+# @file .device.esp32-micro-5x5.yaml
+# @brief Configuration for an ESP32-C3 with 5x5 LED matrix 
+# @author CmPi <cmpi@webe.fr>
+#
+
+esphome:
+  <<: !include .def.esphome.common.yaml
+  platformio_options:
+    board_build.flash_mode: dio
+    board_build.flash_size: 4MB
+
+esp32:
+  board: esp32-c3-devkitm-1
+  variant: esp32c3
+  framework:
+    type: esp-idf
+
+<<: !include .def.common.esp32-c3.yaml
+
+# Enable logging
+logger:
+  <<: !include .logger.debug.yaml   
+
+globals:
+  - id: http_rsp_body
+    type: std::string
+    restore_value: no
+  - id: color_red
+    type: bool
+    restore_value: false
+    initial_value: 'false'
+  - id: color_green
+    type: bool
+    restore_value: false
+    initial_value: 'false'
+  - id: color_blue
+    type: bool
+    restore_value: false
+    initial_value: 'false'
+  - id: anim_mode
+    type: int
+    restore_value: false
+    initial_value: '0'
+
+sensor:
+  - <<: !include .sensor.uptime.yaml
+  - <<: !include .sensor.wifi_signal.yaml   
+  - <<: !include .sensor.cpu_temperature.yaml   
+
+text_sensor:
+  - <<: !include .text_sensor.wifi_info.yaml
+  - <<: !include .text_sensor.version.yaml  
+
+output:
+  - platform: gpio
+    pin:
+      number: GPIO10
+    id: o_led   
+
+# Configure the LED matrix
+# Adjust the pin according to your board - common pins are GPIO8, GPIO10, or GPIO2
+
+button:
+  - <<: !include .button.restart.yaml
+
+  - platform: template
+    name: TEST Blue Button TEST
+    id: b_test_blue
+    on_press:
+      - light.turn_on:
+          id: my_light
+          brightness: 30%     
+          blue: 100%
+          effect: Test Blue
+      - logger.log:
+          level: DEBUG
+          tag: test
+          format: "Test Blue button pressed, light turned ON"          
+
+  # Additive RGB
+  - platform: template
+    name: Toggle Red
+    id: b_red
+    on_press:
+      - lambda: |-
+          id(color_red) = !id(color_red);
+      - light.turn_on:
+          id: my_light
+          brightness: 30%     
+          effect: Additive RGB
+
+  - platform: template
+    name: Toggle Green
+    id: b_green
+    on_press:
+      - lambda: |-
+          id(color_green) = !id(color_green);
+      - light.turn_on:
+          id: my_light
+          brightness: 30%     
+          effect: Additive RGB
+
+  - platform: template
+    name: Toggle Blue
+    id: b_blue
+    on_press:
+      - lambda: |-
+          id(color_blue) = !id(color_blue);
+      - light.turn_on:
+          id: my_light
+          brightness: 30%     
+          effect: Additive RGB
+
+  # Animations
+  - platform: template
+    name: Rainbow Animation
+    id: b_rainbow
+    on_press:
+      - then:
+          - globals.set:
+              id: anim_mode
+              value: '1'
+          - light.turn_on:
+              id: my_light
+              effect: Rainbow
+              state: true
+
+  - platform: template
+    name: Halloween Animation
+    id: b_halloween
+    on_press:
+      - then:
+          - globals.set:
+              id: anim_mode
+              value: '2'
+          - light.turn_on:
+              id: my_light
+              effect: Halloween
+              state: true
+
+  - platform: template
+    name: Xmas Animation
+    id: b_xmas
+    on_press:
+      - then:
+          - globals.set:
+              id: anim_mode
+              value: '3'
+          - light.turn_on:
+              id: my_light
+              effect: Xmas
+              state: true
+
+  - platform: template
+    name: Fireflies Animation
+    id: b_fireflies
+    on_press:
+      - then:
+          - globals.set:
+              id: anim_mode
+              value: '4'
+          - light.turn_on:
+              id: my_light
+              effect: Fireflies
+              state: true
+
+  - platform: template
+    name: Comet Animation
+    id: b_comet
+    on_press:
+      - then:
+          - globals.set:
+              id: anim_mode
+              value: '5'
+          - light.turn_on:
+              id: my_light
+              effect: Comet
+              state: true
+
+  - platform: template
+    name: Pulse Animation
+    id: b_pulse
+    on_press:
+      - then:
+          - globals.set:
+              id: anim_mode
+              value: '6'
+          - light.turn_on:
+              id: my_light
+              effect: Pulse
+              state: true
+
+  - platform: template
+    name: Stop Animation
+    id: b_stop
+    on_press:
+      - light.turn_off:
+          id: my_light
+          state: false
+      - globals.set:
+          id: anim_mode
+          value: '0'
+
+
+
+
+
+
+
+
+
+
+
+light:
+  - <<: !include .light.status_led.yaml
+  - platform: esp32_rmt_led_strip
+    id: my_light
+    pin: GPIO8
+    num_leds: 25
+    chipset: WS2812
+    rgb_order: GRB
+    restore_mode: ALWAYS_OFF
+    gamma_correct: 2.8
+    effects:
+      - addressable_rainbow:
+          name: Rainbow
+          speed: 50
+          width: 25
+
+      - addressable_lambda:
+          name: Test Blue
+          update_interval: 200ms
+          lambda: |-
+            for (int i = 0; i < 25 /* it.size() */; i++) {
+              it[i] = Color(0.0, 0.0, 1.0);
+            }
+            it.range( 0,  5) = Color(100,   0, 0  );
+            it.range( 6, 11) = Color(  0, 100, 0  );
+            it.range(12, 17) = Color(  0,   0, 100);
+
+
+      - addressable_lambda:
+          name: Halloween
+          update_interval: 150ms
+          lambda: |-
+            for (int i = 0; i < it.size(); i++) {
+              float flicker = (float)(esp_random() % 31 + 70) / 100.0;  // 0.70..1.00
+              it[i] = Color(0.8 * flicker, 0.25 * flicker, 0.0);
+            }
+
+      - addressable_lambda:
+          name: Xmas
+          update_interval: 250ms
+          lambda: |-
+            static bool phase = false;
+            phase = !phase;
+            for (int i = 0; i < it.size(); i++) {
+              if ((i + phase) % 2 == 0)
+                it[i] = Color(255, 0.0, 0.0);
+              else
+                it[i] = Color(0.0, 255, 0.0);
+            }
+
+      - addressable_lambda:
+          name: Fireflies
+          update_interval: 120ms
+          lambda: |-
+            for (int i = 0; i < it.size(); i++) {
+              if ((esp_random() % 50) == 0)
+                it[i] = Color(100, 100, 100);
+              else
+                it[i].fade_to_black(20);
+            }
+
+      - addressable_lambda:
+          name: Comet
+          update_interval: 80ms
+          lambda: |-
+            static int pos = 0;
+            pos = (pos + 1) % it.size();
+            for (int i = 0; i < it.size(); i++) {
+              int d = abs(i - pos);
+              float intensity = max(0.0f, 0.2f - d * 0.04f);
+              it[i] = Color(intensity, intensity, intensity);
+            }
+
+      - addressable_lambda:
+          name: Pulse
+          update_interval: 60ms
+          lambda: |-
+            static int t = 0;
+            t++;
+            float v = (sin(t * 0.2f) + 1.0f) / 2.0f;
+            for (int i = 0; i < it.size(); i++) {
+              it[i] = Color(100 * v, 100 * v, 100 * v);
+            }
+
+      - addressable_lambda:
+          name: Additive RGB
+          update_interval: 50ms
+          lambda: |-
+            for (int i = 0; i < it.size(); i++) {
+              float r = id(color_red)   ? 100 : 0;
+              float g = id(color_green) ? 100 : 0;
+              float b = id(color_blue)  ? 100 : 0;
+              it[i] = Color(r, g, b);
+            }
+
+switch:
+  - <<: !include .switch.status_led.yaml
+
+script:
+  - id: device_start
+    then:
+    - delay: 1ms
+  - id: rgb_tst
+    then:
+      - light.turn_on:
+          id: my_light
+          brightness: 30%
+          red: 100%
+          green: 0%
+          blue: 0%
+      - delay: 1s
+      - light.turn_on:
+          id: my_light
+          brightness: 50%
+          red: 0%
+          green: 100%
+          blue: 0%
+      - delay: 1s
+      - light.turn_on:
+          id: my_light
+          brightness: 30%
+          red: 0%
+          green: 0%
+          blue: 100%
+      - delay: 1s
+      - light.turn_off: my_light
+  - id: declare_config
+    then:
+    - delay: 1ms
+  - id: report_uptime
+    then:
+    - delay: 1ms
+  - <<: !include .script.status_led.blinkx3.yaml
+
+
+mdns:
+  disabled: True

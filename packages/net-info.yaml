@@ -26,18 +26,12 @@ text_sensor:
     ssid:
       name: "SSID"
       id: ssid
-      update_interval: 60s
-  # MAC Address
-  - platform: wifi_info
     mac_address:
       name: "Mac"
       id: mac
-  # IP Address
-  - platform: wifi_info
     ip_address:
       name: "IP"
       id: ip  
-      update_interval: 600s          
 
 script:
   - id: report_rssi

@@ -9,7 +9,6 @@ substitutions:
   device_fn: "TTGO-32-SENSORS (TFT)"
   device_sn: "ttgo32-1"
   device_lc: "0cc2c8"
-  full_mac: "3C:61:05:0C:C2:C8"
   ip_0: 192.168.0.39
   room: cuisine
   detected_flash_size: 4MB
@@ -69,7 +68,7 @@ sensor:
 # Chip is ESP32-D0WDQ6-V3 (revision v3.0)
 # Features: Wi-Fi, BT, Dual Core + LP Core, 240MHz, Vref calibration in eFuse, Coding Scheme None
 # Crystal is 40MHz
-# MAC: 3c61050cc2c8
+# MAC: 3C:61:05:0C:C2:C8 
 # Manufacturer: 68
 # Device: 4016
 # Status value: 0x0200

@@ -5,11 +5,6 @@
 # @date creation 2026-01-02
 #
 
-api:
-  encryption:
-    key: !secret api_key
-  reboot_timeout: 10min  
-
 ota:
   - platform: esphome
     password: !secret ota_password

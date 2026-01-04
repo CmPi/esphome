@@ -1,0 +1,64 @@
+esphome:
+  <<: !include ../.def.esphome.common.yaml
+
+esp32:
+  # The ESP32-C6 requires using the esp-idf framework
+  framework:
+    type: esp-idf
+  # The board type may vary, use one that matches your physical board (e.g., devkitc-1)
+  # Change this if you know your specific board model
+  board: esp32-c6-devkitc-1
+  variant: esp32c6
+  # Specify the detected flash size
+  flash_size: 16MB
+  # The 40MHz crystal is the default, but it's good practice to specify
+  # cpu_frequency: 160MHz is the default for C6 (not required to specify)
+
+
+packages:
+  - !include ../packages/min-info.yaml
+  - !include ../packages/sys-info.yaml
+  - !include ../packages/net-info.yaml
+  - !include ../packages/webe.yaml
+
+wifi:
+  id: n_main
+  reboot_timeout: 0s
+  fast_connect: true
+  min_auth_mode: WPA  
+  power_save_mode: ${pwr_mode}
+  output_power: ${pwr_val}
+  networks:
+    - ssid: !secret wifi1_ssid
+      password: !secret wifi1_password
+    - ssid: !secret wifi2_ssid
+      password: !secret wifi2_password      
+  manual_ip:
+    # Set this to the IP of the ESP
+    static_ip: ${ip_0}
+    # Set this to the IP address of the router. Often ends with .1
+    gateway: 192.168.0.1
+    # The subnet of the network. 255.255.255.0 works for most home networks.
+    subnet: 255.255.255.0    
+    dns1: 8.8.8.8        # Google DNS
+    dns2: 1.1.1.1        # Cloudflare DNS 
+#   Enable fallback hotspot (captive portal) in case wifi connection fails
+#   ap:
+#     ssid: "$(device_lc) AP"
+#     password: "${ap_password}"
+
+api:
+  encryption:
+    key: !secret api_key
+  reboot_timeout: 0s  # Prevents "unavailable" status    
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+mdns:
+  disabled: false    
+
+ # Enable logging
+logger:
+  <<: !include ../.logger.debug.yaml    

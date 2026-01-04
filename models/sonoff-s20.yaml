@@ -8,7 +8,6 @@
 substitutions:
   device_type: "s2x"
   soc_type: "ESP8266"
-  config_version: "0.2.002"
   pwr_mode: NONE
   pwr_val: 18dB
   status_led_gpio: GPIO13  # used by status_led package
@@ -16,6 +15,7 @@ substitutions:
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
   board: esp01_1m
+  config_version: "0.2.002"
 
 packages:
   - !include ../packages/esphome.esp8266.yaml
@@ -23,7 +23,7 @@ packages:
   - !include ../packages/api-ota.yaml    
   - !include ../packages/min-info.yaml
   - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
-  - !include ../packages/webe.yaml
+  - !include ../packages/no-webe.yaml
 
 binary_sensor:
   - platform: gpio
@@ -56,12 +56,6 @@ switch:
       - script.execute: status_led_blinkx3
     on_turn_off:
       - script.execute: status_led_blinkx3
-
-script:
-  - id: !extend declare_config
-    mode: queued
-    then: 
-      - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
 
 logger:
   <<: !include ../keys/logger.none.yaml

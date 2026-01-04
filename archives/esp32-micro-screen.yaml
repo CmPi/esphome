@@ -1,0 +1,50 @@
+#
+# @file esp32-micro-5x5.yaml
+# @brief Specific Device Configuration
+# @author CmPi <cmpi@webe.fr>
+#
+
+substitutions:
+    device_fn: "ESP32-STAMP"
+    device_lc: "c0eaa0"
+    full_mac: "e4:b3:23:c0:ea:e0"
+    device_type: "ESP32-C3"
+    config_version: "0.1.299"
+    ip_0: 192.168.0.243
+    webe_api: !secret webe_api
+    webe_usrm: !secret webe_usrm    
+    webe_key: !secret webe_key
+
+<<: !include .device.esp32-micro-screen.yaml  
+
+# https://www.aliexpress.com/item/1005007342383107.html?spm=a2g0o.order_list.order_list_main.122.5b965e5bMK8z4q
+# https://github.com/zhuhai-esp/ESP32-C3-ABrobot-OLED/tree/main/C3-ABrobot-OLED
+
+# compatible SSD1306 et le constructeur de la bibliothèque est « U8G2_SSD1306_72X40_ER_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, 6, 5); »
+
+# Chip is ESP32-C3 (QFN32) (revision v0.4)
+# Features: Wi-Fi, BT 5 (LE), Single Core, 160MHz, Embedded Flash 4MB (XMC)
+# Crystal is 40MHz
+# MAC: e4b323c0eae0
+# Manufacturer: 20
+# Device: 4016
+# Status value: 0x600200
+# Detected flash size: 4MB
+
+# 0.42 SCREEN
+
+# RX      GPIO20
+# TX      GPIO21
+# A2      GPIO01
+# A0      GPIO0
+# SCL     GPIO09
+# SDA     GPIO08
+# SS      GPIO07
+# MOSI    GPIO06
+# A5/MISO GPIO05
+# A4      GPIO04
+# A3      GPIO03 
+
+# Screen: SH1106 128x64, an offset (30) on I²C (GPIO06 and GPIO05)
+# LED:    GPIO8
+# Button: 

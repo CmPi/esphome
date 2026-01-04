@@ -11,7 +11,7 @@ substitutions:
   pwr_mode: LIGHT
   pwr_val: 20dB
   detected_flash_size: 4MB
-  config_version: "0.2.002"
+  config_version: "0.2.004"
   # display
   bw_only: false
   bl_supported: 'false'
@@ -20,6 +20,9 @@ substitutions:
   bs_next_gpio: GPIO10
   # status LED GPIO (required by package/status_led.yaml)
   status_led_gpio: GPIO11 
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -32,3 +35,81 @@ packages:
   - !include ../packages/esphome.dio.yaml
   - !include ../packages/wifi-mdns.yaml
   - !include ../packages/api-ota.yaml    
+  - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
+  - !include ../packages/met.yaml
+# - !include packages/sys-info.yaml
+# - !include packages/net-info.yaml
+  - !include ../packages/display.menu.yaml
+  - !include ../packages/display.date-time.yaml
+  - !include ../packages/weather.yaml
+  - !include ../packages/bermuda.yaml # for bluetooth scanning (safe for an ESP32-C3)
+  - !include ../packages/webe.yaml
+
+# --- SPI BUS -----------------------------------------------------
+
+# --- GLOBALS ---
+
+globals:
+  - id: blink_state
+    type: bool
+    initial_value: 'false'
+
+spi:
+  id: spi_bus
+  clk_pin: GPIO3        # SCL
+  mosi_pin: GPIO4       # SDA
+  # No MISO needed for ST7735
+
+# --- DISPLAY -----------------------------------------------------
+
+display:
+  - id: d_main
+    platform: mipi_spi
+    model: ST7735
+    rotation: 180
+    dimensions:
+      height: 128
+      width: 128
+      offset_width: 2 
+      offset_height: 3
+    color_order: bgr
+    invert_colors: false
+    cs_pin: GPIO2
+    dc_pin: GPIO0
+    reset_pin: GPIO5
+    spi_id: spi_bus
+    data_rate: 40MHz
+    update_interval: 1s
+
+# --- INTERVAL FOR BLINKING ---
+interval:
+  - interval: 500ms
+    then:
+      - lambda: |-
+          id(blink_state) = !id(blink_state);
+
+
+sensor:
+  - <<: !include ../keys/sensor.uptime.yaml
+
+
+
+# --- BUTTONS -----------------------------------------------------
+binary_sensor:
+  - id: !extend bs_select
+    platform: gpio
+    pin:
+      number: ${bs_select_gpio}
+      mode: INPUT_PULLUP
+      inverted: true
+  - id: !extend bs_next
+    platform: gpio
+    pin:
+      number: ${bs_next_gpio}
+      mode: INPUT_PULLUP
+      inverted: true
+
+# Enable logging
+
+logger:
+  <<: !include ../keys/logger.debug.yaml   
