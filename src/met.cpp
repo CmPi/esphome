@@ -1,8 +1,14 @@
+/**
+ *  @file sysinfo.cpp
+ *  @brief package handling display and menu functions for MET display
+ *  @author CmPi <github.com/CmPi>
+ */
+
 #include "esphome.h"
 #include "met.h"
 #include "driver/gpio.h" // Include header here too, for the implementation
 
-using namespace esphome;
+namespace esphome {
 
 /**
  * @brief Directly controls the backlight pin (GPIO4) using low-level ESP-IDF functions.
@@ -761,15 +767,15 @@ void drawWeatherAndMoon(
             // first (weather) icon
             it.print(first_cx, 80, pFontWeather, icon_color, esphome::display::TextAlign::CENTER, icon);
             // second (moon) icon from moon phase sensor if present
-            if (pMoonPhaseIcon != nullptr && pMoonPhaseIcon->has_state() && pMoonPhaseIcon->state != "") {
+                if (pMoonPhaseIcon != nullptr && pMoonPhaseIcon->has_state() && pMoonPhaseIcon->state != "") {
                 const char *moon_icon = pMoonPhaseIcon->state.c_str();
-                it.print(second_cx, 80, pFontWeather, Color::WHITE, esphome::display::TextAlign::CENTER, moon_icon);
+                it.print(second_cx, 80, pFontWeather, Color(0xFFFF00), esphome::display::TextAlign::CENTER, moon_icon);
             }
         } else {
             // Only moon — center it so it's not a "right-only" symbol
             if (pMoonPhaseIcon != nullptr && pMoonPhaseIcon->has_state() && pMoonPhaseIcon->state != "") {
                 const char *moon_icon = pMoonPhaseIcon->state.c_str();
-                it.print(center_cx, 80, pFontWeather, Color::WHITE, esphome::display::TextAlign::CENTER, moon_icon);
+                it.print(center_cx, 80, pFontWeather, Color(0xFFFF00), esphome::display::TextAlign::CENTER, moon_icon);
             } else {
                 // Fallback: draw the normalized icon (e.g., moon glyph) centered
                 it.print(center_cx, 80, pFontWeather, icon_color, esphome::display::TextAlign::CENTER, icon);
@@ -810,8 +816,6 @@ void drawProgressPage(
 
 // ---------------- cMet implementation ----------------
 
-// Define global instance
-cMet met;
 
     void cMet::init(
         esphome::display::Display &it, 
@@ -956,3 +960,7 @@ void cMet::drawOptionsPage(   esphome::display::Display &it,
     
 }
 
+     // Define global instance
+    cMet met;
+
+}

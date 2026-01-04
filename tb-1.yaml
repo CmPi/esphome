@@ -11,4 +11,5 @@ substitutions:
     webe_usrm: !secret webe_usrm    
     webe_key: !secret webe_key
     
-<<: !include .device.trigboard.yaml            
+packages:
+  - !include models/device.trigboard.yaml            

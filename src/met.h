@@ -9,6 +9,9 @@
 
 #include "driver/gpio.h" // <<< IMPORTANT: Include the necessary ESP-IDF GPIO header
 
+namespace esphome {
+
+
 // ... existing function declarations ...
 
 void backlight_on_for_ota(bool on); // <<< ADD THIS FUNCTION DECLARATION
@@ -121,3 +124,5 @@ public:
 
 // Global instance you can call from lambdas
 extern cMet met;
+
+}

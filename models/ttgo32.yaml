@@ -21,10 +21,6 @@ substitutions:
   config_version: "0.2.004"
 
 esphome:
-  project:
-    name: "CmPi.MyEhThings"
-    version: $config_version
-  area: "${room}"
   platformio_options:
     board_build.flash_mode: dio
     board_build.flash_size: ${detected_flash_size}

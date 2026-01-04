@@ -11,4 +11,5 @@ substitutions:
     webe_key: !secret webe_key
     ip_0: 192.168.0.13   
     
-<<: !include .device.sonoff-basic-r1.yaml            
+packages:
+  - !include models/device.sonoff-basic-r1.yaml            

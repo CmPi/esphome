@@ -31,6 +31,12 @@ esp32:
   framework:
     type: esp-idf
 
+esphome:
+  includes:
+    - src/met.cpp
+    - src/met.h
+
+
 packages:
   - !include ../packages/esphome.dio.yaml
   - !include ../packages/wifi-mdns.yaml

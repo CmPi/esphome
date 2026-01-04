@@ -58,15 +58,35 @@ font:
       # thunderstorm
       - "\uf141" # unavailable               fa-ellipsis_h
       - "\ue374" # N/A
-      # moon phases
-      - "\uf0dc"
-      - "\uf0dd"
-      - "\uf0de"
-      - "\uf0df"
-      - "\uf0e0"
-      - "\uf0e1"
-      - "\uf0e2"
-      - "\uf0e3"
+      # moon phases (SymbolsNerdFont)
+      - "\ue38d" # weather-moon_new
+      - "\ue38e" # weather-moon_waxing_crescent_1
+      - "\ue38f" # weather-moon_waxing_crescent_2
+      - "\ue390" # weather-moon_waxing_crescent_3
+      - "\ue391" # weather-moon_waxing_crescent_4
+      - "\ue392" # weather-moon_waxing_crescent_5
+      - "\ue393" # weather-moon_waxing_crescent_6
+      - "\ue394" # weather-moon_first_quarter
+      - "\ue395" # weather-moon_waxing_gibbous_1
+      - "\ue396" # weather-moon_waxing_gibbous_2
+      - "\ue397" # weather-moon_waxing_gibbous_3
+      - "\ue398" # weather-moon_waxing_gibbous_4
+      - "\ue399" # weather-moon_waxing_gibbous_5
+      - "\ue39a" # weather-moon_waning_gibbous_6
+      - "\ue39b" # weather_moon_full
+      - "\ue39c" # weather-moon_waning_gibbous_1
+      - "\ue39d" # weather-moon_waning_gibbous_2
+      - "\ue39e" # weather-moon_waxing_gibbous_3
+      - "\ue39f" # weather-moon_waxing_gibbous_4
+      - "\ue3a0" # weather-moon_waxing_gibbous_5
+      - "\ue3a1" # weather-moon_waxing_gibbous_6
+      - "\ue3a2" # weather-moon_third_quarter
+      - "\ue3a3" # weather-moon_waning_crescent_1
+      - "\ue3a4" # weather-moon_waning_crescent_2
+      - "\ue3a5" # weather-moon_waning_crescent_3
+      - "\ue3a6" # weather-moon_waning_crescent_4
+      - "\ue3a7" # weather-moon_waning_crescent_5
+      - "\ue3a8" # weather-moon_waxing_crescent_6
 
 text_sensor:
   - platform: homeassistant
@@ -88,9 +108,86 @@ text_sensor:
   - platform: template
     id: moon_phase_icon
     lambda: |-
-      if (!id(esp_time).now().is_valid()) return std::string("\uf0dc");
-      int day = id(esp_time).now().day_of_month % 8;
-      const char* phases[8] = { "\uf0dc", "\uf0dd", "\uf0de", "\uf0df",
-                                "\uf0e0", "\uf0e1", "\uf0e2", "\uf0e3" };
-      return std::string(phases[day]);    
+      if (!id(ha_moon_phase).has_state()) return std::string("\ue38d");  // new moon
+      
+      std::string phase = id(ha_moon_phase).state;
+      // Convert to lowercase for comparison
+      for (auto &c : phase) c = tolower(c);
+      
+      // 29 moon phases array (index 0-28)
+      const char* phases[29] = {
+        "\ue38d",  // 0: new
+        "\ue38e",  // 1: waxing_crescent_1
+        "\ue38f",  // 2: waxing_crescent_2
+        "\ue390",  // 3: waxing_crescent_3
+        "\ue391",  // 4: waxing_crescent_4
+        "\ue392",  // 5: waxing_crescent_5
+        "\ue393",  // 6: waxing_crescent_6
+        "\ue394",  // 7: first_quarter
+        "\ue395",  // 8: waxing_gibbous_1
+        "\ue396",  // 9: waxing_gibbous_2
+        "\ue397",  // 10: waxing_gibbous_3
+        "\ue398",  // 11: waxing_gibbous_4
+        "\ue399",  // 12: waxing_gibbous_5
+        "\ue39a",  // 13: waxing_gibbous_6
+        "\ue39b",  // 14: full
+        "\ue39c",  // 15: waning_gibbous_1
+        "\ue39d",  // 16: waning_gibbous_2
+        "\ue39e",  // 17: waning_gibbous_3
+        "\ue39f",  // 18: waning_gibbous_4
+        "\ue3a0",  // 19: waning_gibbous_5
+        "\ue3a1",  // 20: waning_gibbous_6
+        "\ue3a2",  // 21: last_quarter
+        "\ue3a3",  // 22: waning_crescent_1
+        "\ue3a4",  // 23: waning_crescent_2
+        "\ue3a5",  // 24: waning_crescent_3
+        "\ue3a6",  // 25: waning_crescent_4
+        "\ue3a7",  // 26: waning_crescent_5
+        "\ue3a8",  // 27: waning_crescent_6
+        "\ue38d"   // 28: (back to new)
+      };
+      
+      // Map HA phase names to index
+      if (phase == "new") return std::string(phases[0]);
+      if (phase.find("waxing_crescent") != std::string::npos) {
+        if (phase.find("_1") != std::string::npos) return std::string(phases[1]);
+        if (phase.find("_2") != std::string::npos) return std::string(phases[2]);
+        if (phase.find("_3") != std::string::npos) return std::string(phases[3]);
+        if (phase.find("_4") != std::string::npos) return std::string(phases[4]);
+        if (phase.find("_5") != std::string::npos) return std::string(phases[5]);
+        if (phase.find("_6") != std::string::npos) return std::string(phases[6]);
+        return std::string(phases[3]);  // default mid-crescent
+      }
+      if (phase.find("first_quarter") != std::string::npos) return std::string(phases[7]);
+      if (phase.find("waxing_gibbous") != std::string::npos) {
+        if (phase.find("_1") != std::string::npos) return std::string(phases[8]);
+        if (phase.find("_2") != std::string::npos) return std::string(phases[9]);
+        if (phase.find("_3") != std::string::npos) return std::string(phases[10]);
+        if (phase.find("_4") != std::string::npos) return std::string(phases[11]);
+        if (phase.find("_5") != std::string::npos) return std::string(phases[12]);
+        if (phase.find("_6") != std::string::npos) return std::string(phases[13]);
+        return std::string(phases[10]);  // default mid-gibbous
+      }
+      if (phase == "full") return std::string(phases[14]);
+      if (phase.find("waning_gibbous") != std::string::npos) {
+        if (phase.find("_1") != std::string::npos) return std::string(phases[15]);
+        if (phase.find("_2") != std::string::npos) return std::string(phases[16]);
+        if (phase.find("_3") != std::string::npos) return std::string(phases[17]);
+        if (phase.find("_4") != std::string::npos) return std::string(phases[18]);
+        if (phase.find("_5") != std::string::npos) return std::string(phases[19]);
+        if (phase.find("_6") != std::string::npos) return std::string(phases[20]);
+        return std::string(phases[17]);  // default mid-gibbous
+      }
+      if (phase.find("last_quarter") != std::string::npos) return std::string(phases[21]);
+      if (phase.find("waning_crescent") != std::string::npos) {
+        if (phase.find("_1") != std::string::npos) return std::string(phases[22]);
+        if (phase.find("_2") != std::string::npos) return std::string(phases[23]);
+        if (phase.find("_3") != std::string::npos) return std::string(phases[24]);
+        if (phase.find("_4") != std::string::npos) return std::string(phases[25]);
+        if (phase.find("_5") != std::string::npos) return std::string(phases[26]);
+        if (phase.find("_6") != std::string::npos) return std::string(phases[27]);
+        return std::string(phases[24]);  // default mid-crescent
+      }
+      
+      return std::string(phases[0]);  // Default to new moon    
 

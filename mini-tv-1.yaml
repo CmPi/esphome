@@ -14,7 +14,6 @@ substitutions:
 packages:
   - !include models/mini-tv.yaml
 
-
 # Chip is ESP32-C3 (QFN32) (revision v0.4)
 # Features: Wi-Fi, BT 5 (LE), Single Core, 160MHz
 # Crystal is 40MHz
@@ -43,4 +42,5 @@ packages:
 # IO20 - RXD
 # IO21 - TXD
 
-
+logger:
+  level: verbose

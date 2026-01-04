@@ -1,0 +1,87 @@
+#
+# @file models/ttgo32.yaml
+# @brief common part of a TTGO
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
+
+substitutions:
+  device_type: "TTGO-8266"
+  config_version: "0.4.004"
+  pwr_mode: NONE
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  detected_flash_size: 4MB
+  # display
+  bw_only: true
+  bl_supported: false
+
+
+packages:
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include packages/display.date-time.yaml
+
+esphome:
+  includes:
+    - src/met.cpp
+    - src/met.h
+
+script:
+    - id: declare_config
+      then: 
+        - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ds18b20"} }          
+        - delay: 7s       
+        - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+    - id: report_uptime
+      then: !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
+    - id: report_ds18b20
+      then: !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ds18b20"} }  
+    - id: process_json
+      then:
+        - lambda: |-
+            json::parse_json(id(http_rsp_body), [](JsonObject root)->bool {
+              if (!root.isNull()) {
+                if (root["line1"].is<const char*>()) {
+                  const char* tmp = root["line1"];
+                  id(line1).clear();
+                  id(line1).append(tmp);
+                }
+                if (root["line2"].is<const char*>()) {
+                  const char* tmp = root["line2"];
+                  id(line2).clear();
+                  id(line2).append(tmp);
+                }
+                if (root["line3"].is<const char*>()) {
+                  const char* tmp = root["line3"];
+                  id(line3).clear();
+                  id(line3).append(tmp);
+                }
+                if (root["line4"].is<const char*>()) {
+                  const char* tmp = root["line4"];
+                  id(line4).clear();
+                  id(line4).append(tmp);
+                }
+                if (root["line5"].is<const char*>()) {
+                  const char* tmp = root["line5"];
+                  id(line5).clear();
+                  id(line5).append(tmp);
+                }
+                if (root["line6"].is<const char*>()) {
+                  const char* tmp = root["line6"];
+                  id(line6).clear();
+                  id(line6).append(tmp);
+                }
+                if (root["bTime"].is<const char*>()) {
+                  id(bTime) = ( root["bTime"] ? true : false );   
+                }
+                if (root["bGauge"].is<const char*>()) {
+                  id(bGauge) = ( root["bGauge"] ? true : false );   
+                }
+              }
+              return true;
+            });
+    
+<<: !include .display.ssd1306_i2c.yaml      
