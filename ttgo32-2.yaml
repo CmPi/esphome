@@ -19,28 +19,28 @@ packages:
   - !include models/ttgo32.yaml
 
 # Optional: Battery voltage sensor (if battery monitoring is connected)
-sensor:
+#sensor:
   # --- AHT2x Temperature & Humidity ---
-  - platform: aht10
-    address: 0x38
+#  - platform: aht10
+#    address: 0x38
 #   variant: AHT20
-    temperature:
-      id: aht_temperature
-      name: "Temperature"
-      device_class: temperature
-      state_class: measurement
-      unit_of_measurement: "°C"
-      accuracy_decimals: 1
-      icon: "mdi:thermometer"
-    humidity:
-      id: aht_humidity
-      name: "Humidity"
-      device_class: humidity
-      state_class: measurement
-      unit_of_measurement: "%"
-      accuracy_decimals: 1
-      icon: "mdi:water-percent"
-    update_interval: 30s
+#    temperature:
+#      id: aht_temperature
+#      name: "Temperature"
+#      device_class: temperature
+#      state_class: measurement
+#      unit_of_measurement: "°C"
+#      accuracy_decimals: 1
+#      icon: "mdi:thermometer"
+#    humidity:
+#      id: aht_humidity
+#      name: "Humidity"
+#      device_class: humidity
+#      state_class: measurement
+#      unit_of_measurement: "%"
+#      accuracy_decimals: 1
+#      icon: "mdi:water-percent"
+#    update_interval: 30s
 
 
 
