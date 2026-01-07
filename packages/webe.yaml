@@ -17,6 +17,15 @@ http_request:
 # buffer_size_rx: 256  # Reduce from 512
 # buffer_size_tx: 256  # Reduce from 512  
 
+sensor:
+  - id: !extend ontime
+    on_value:
+      if:
+        condition:
+          wifi.connected
+        then:  
+          - script.execute: report_uptime
+
 script:
   - id: device_start
     mode: queued

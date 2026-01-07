@@ -1,11 +1,15 @@
-# Specific Device Configuration
+#
+# @file basic-bc4a5d.yaml
+# @brief Specific Configuration for a Sonoff DUAL R3 device which MAC address ends by ${device_lc}
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-03
+#
 
 substitutions:
-    device_fn: "MINI R4"
-    device_lc: 4a01bc
-    config_version: 0.1.293
-    ip_0: 192.168.0.65   
-    room: "cuisine"
+  device_fn: "MINI R4"
+  device_lc: 4a01bc
+  ip_0: 192.168.0.65   
+  room: "cuisine"
 
 packages:
   - !include models/mini-r4.yaml

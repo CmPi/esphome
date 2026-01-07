@@ -8,21 +8,21 @@
 substitutions:
   device_type: "r3v2"
   board: "esp32dev"
+  soc_type: "ESP32"
   pwr_mode: LIGHT
   pwr_val: 18dB
   webe_api: !secret webe_api
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
   detected_flash_size: 4MB
-  config_version: "0.2.004"
+  config_version: "0.2.006"
 
 packages:
   - !include ../packages/esphome.dio.yaml
   - !include ../packages/wifi-mdns.yaml
   - !include ../packages/api-ota.yaml
+  - !include ../packages/min-info.yaml
   - !include ../packages/no-webe.yaml
-
-# Do not add BLuetooth tracker!
 
 esp32:
   board: esp32dev
@@ -30,9 +30,9 @@ esp32:
     type: esp-idf  
     
 globals:
-    - id: http_rsp_body
-      type: std::string
-      restore_value: no    
+  - id: http_rsp_body
+    type: std::string
+    restore_value: no    
       
 uart:
   tx_pin: GPIO25
@@ -43,7 +43,7 @@ uart:
 
 sensor:  
   - platform: bl0939
-    update_interval: 10s
+    update_interval: 30s
     voltage:
       name: 'Voltage'
     current_1:
@@ -129,24 +129,6 @@ binary_sensor:
       - switch.turn_on: relay_2
     on_release:
       - switch.turn_off: relay_2
-#  - platform: ble_presence
-#    mac_address: E8:6F:C6:AA:7F:91  # your watch or phone BLE MAC
-#    name: "Christophe's Watch Presence"      
-#  - platform: ble_presence
-#    mac_address: AA:BB:CC:DD:EE:01  # your watch or phone BLE MAC
-#    name: "Christophe's Phone Presence"      
-#  - platform: ble_presence
-#    mac_address: 00:02:3C:26:6A:02  # your watch or phone BLE MAC
-#    name: "T12 Presence"         
-      
-      
+            
 logger:
-  level: ERROR
-  baud_rate: 0  # disable UART logging
-  
-mdns:
-  disabled: true      
-      
-      
-      
-      
+  <<: !include ../keys/logger.none.yaml    

@@ -52,7 +52,6 @@ globals:
     restore_value: false
     initial_value: '0.0'
 
-
 button:
   # Progressive (3s) SWITCH ON
   - platform: template

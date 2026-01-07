@@ -1,0 +1,6 @@
+# CPU Temperature (ESP32, RP2040 and BK72XX)
+- platform: internal_temperature
+  id: cpu_temp
+  name: "CPU Temperature"
+  update_interval: 600s
+  entity_category: "diagnostic"

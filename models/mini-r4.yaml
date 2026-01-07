@@ -1,4 +1,9 @@
-# === === Template for SONOFF MINIR R4
+#
+# @file sonoff-dualr3.yaml
+# @brief Common Configuration for Sonoff Mini-r4 devices
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-04
+#
 
 substitutions:
   device_type: "mini-r4"
@@ -10,33 +15,31 @@ substitutions:
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
   detected_flash_size: 4MB
-  config_version: "0.1.004"
+  config_version: "0.1.006"
 
 packages:
   - !include ../packages/esphome.dio.yaml
   - !include ../packages/wifi-mdns.yaml
   - !include ../packages/api-ota.yaml
-  - !include ../packages/net-info.yaml
-  - !include ../packages/sys-info.yaml
-  - !include ../packages/webe.yaml
+  - !include ../packages/min-info.yaml
+  - !include ../packages/no-webe.yaml
 
 esp32:
   board: esp32dev
   variant: esp32
   framework:
-    # esp-idf has Better Bluetooth performance than Arduino
     type: esp-idf  
     version: recommended
 
 # ========== BLUETOOTH PROXY ==========
-esp32_ble_tracker:
-  scan_parameters:
-    interval: 1100ms
-    window: 1100ms
-    active: true
+#esp32_ble_tracker:
+#  scan_parameters:
+#    interval: 1100ms
+#    window: 1100ms
+#    active: true
 
-bluetooth_proxy:
-  active: true    
+#bluetooth_proxy:
+#  active: true    
 
 # === SENSORS
 
@@ -60,9 +63,6 @@ binary_sensor:
     on_press:
       - switch.toggle: relay
 
-sensor:
-  - <<: !include ../keys/sensor.uptime.yaml
-
 output:
   - platform: gpio
     pin: GPIO26
@@ -80,20 +80,3 @@ switch:
     output: relay_output
     id: relay
     restore_mode: ALWAYS_OFF
-
-script:
-    - id: !extend declare_config
-      then: 
-        - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
-        - delay: 10s
-        - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }  
-    - id: !extend report_uptime
-      then:
-        - !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
-        - delay: 10s
-        - !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "rssi"} }  
-    - id: !extend process_json
-      then:
-        - delay: 1ms
-      mode: single    
-

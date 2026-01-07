@@ -20,6 +20,9 @@ button:
     icon: mdi:restart
     disabled_by_default: false
 
+packages:
+  - !include ../packages/min-info.yaml
+
 sensor:
   - platform: template
     name: "My Flash Size (JDEC)"
@@ -73,12 +76,6 @@ sensor:
     lambda: |-
       return (float)esphome::sysinfo::SysInfoComponent::get_cpu_cores();
     update_interval: ${sysinfo_update_interval}
-  # reports CPU Temperature (ESP32 only)
-  - id: cpu_temp
-    platform: internal_temperature
-    name: "CPU Temperature"
-    update_interval: 600s
-    entity_category: "diagnostic"
 
 # Chip Information
 text_sensor:

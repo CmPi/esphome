@@ -15,6 +15,6 @@ script:
     - delay: 1ms
   - id: process_json
     then:
-    - delay: 1ms
+      - delay: 1ms
     mode: single     
 

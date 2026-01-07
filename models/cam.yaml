@@ -7,11 +7,12 @@
 
 substitutions:
   device_type: "cam"
+  board: "esp32cam"
   soc_type: "ESP32"
   pwr_mode: NONE
   pwr_val: 20dB
   detected_flash_size: 4MB
-  config_version: "0.1.002"
+  config_version: "0.1.006"
 
 esp32:
   board: esp32cam
@@ -23,7 +24,7 @@ packages:
   - !include ../packages/esphome.dio.yaml
   - !include ../packages/wifi-mdns.yaml
   - !include ../packages/api-ota.yaml    
-  - !include ../packages/sys-info.yaml  
+  - !include ../packages/min-info.yaml  
 
 psram:
   mode: quad

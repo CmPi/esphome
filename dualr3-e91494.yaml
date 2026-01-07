@@ -6,13 +6,12 @@
 #
 
 substitutions:
-    device_fn: "DUAL R3 V2.0"
-    device_lc: e91494
-    ip_0: 192.168.0.199  
-    room: "chambre"
+  device_fn: "DUAL R3 V2.0"
+  device_lc: e91494
+  ip_0: 192.168.0.199  
+  room: "chambre"
 
 packages:
   - !include models/sonoff-dualr3.yaml
-
 
 # MAC: C8:F0:9E:E9:14:94  

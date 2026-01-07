@@ -11,7 +11,7 @@ substitutions:
   pwr_mode: LIGHT
   pwr_val: 20dB
   detected_flash_size: 4MB
-  config_version: "0.2.004"
+  config_version: "0.2.006"
   # display
   bw_only: false
   bl_supported: 'false'
@@ -36,15 +36,15 @@ esphome:
     - src/met.cpp
     - src/met.h
 
-
 packages:
   - !include ../packages/esphome.dio.yaml
   - !include ../packages/wifi-mdns.yaml
   - !include ../packages/api-ota.yaml    
   - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
   - !include ../packages/met.yaml
-# - !include packages/sys-info.yaml
-# - !include packages/net-info.yaml
+  - !include ../packages/min-info.yaml
+# - !include ../packages/sys-info.yaml
+# - !include ../packages/net-info.yaml
   - !include ../packages/display.menu.yaml
   - !include ../packages/display.date-time.yaml
   - !include ../packages/weather.yaml
@@ -93,12 +93,6 @@ interval:
     then:
       - lambda: |-
           id(blink_state) = !id(blink_state);
-
-
-sensor:
-  - <<: !include ../keys/sensor.uptime.yaml
-
-
 
 # --- BUTTONS -----------------------------------------------------
 binary_sensor:

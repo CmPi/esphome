@@ -1,20 +1,11 @@
-
-
+substitutions:
+  is_esp8266_family: "${ soc_type == 'ESP8266' or soc_type == 'ESP8285' }"
 
 binary_sensor:
   - platform: status
     name: "Status"
 
 sensor:
-  - id: ontime
-    platform: uptime
-    name: "uptime"  
-    icon: "mdi:timer"
-    update_interval: 900s    
-    entity_category: "diagnostic"
-    on_value:
-      if:
-        condition:
-          wifi.connected
-        then:  
-          - script.execute: report_uptime
+  - <<: !include ../keys/sensor.uptime.yaml
+  - <<: !include ../keys/sensor.cpu_temperature.yaml
+  - id: !remove ${ "cpu_temp" if is_esp8266_family else "" }

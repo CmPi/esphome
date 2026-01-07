@@ -1,22 +1,23 @@
-esphome:
-  <<: !include .def.esphome.common.yaml
-  platformio_options:
-    board_build.ldscript: eagle.flash.1m.ld
-    build_flags:
-      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY  
-
-<<: !include .def.common.yaml
-<<: !include .wifi-api-ota.yaml
-
-esp8266:
+substitutions:
+  device_type: "bridge"
   board: esp01_1m
+  soc_type: "ESP8266"
+  pwr_mode: NONE
+  pwr_val: 18dB
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  status_led_gpio: GPIO13  # used by status_led package
+  config_version: "0.2.006"
 
-binary_sensor:
-- platform: status
-    name: "RF Bridge Status"
+packages:
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include ../packages/min-info.yaml    
 
 # use esphome log viewer to get binary transmission for sensor state.  Below are examples when using either single state or dual state sensors.
-
+sensor:
 # use this for single state sensors (single trigger)
   - platform: remote_receiver
     name: "Sensor1"
@@ -49,10 +50,6 @@ binary_sensor:
     name: "Sensor2 State"
     device_class: window
     id: Sensor2
-
-sensor:
-  - <<: !include .sensor.uptime.yaml
-  - <<: !include .sensor.wifi_signal.yaml
 
 remote_receiver:
   pin: 4
