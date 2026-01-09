@@ -6,11 +6,11 @@
 #
 
 substitutions:
-    device_fn: "CAM RMALO"
-    device_sn: "rmalo"
-    device_lc: "ba91ec"
-    ip_0: 192.168.0.155
-    room: desk
+  device_fn: "CAM RMALO"
+  device_sn: "rmalo"
+  device_lc: "ba91ec"
+  host16: 155
+  room: "bureau"
 
 packages:
   - !include models/cam.yaml

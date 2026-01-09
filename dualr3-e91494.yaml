@@ -8,7 +8,7 @@
 substitutions:
   device_fn: "DUAL R3 V2.0"
   device_lc: e91494
-  ip_0: 192.168.0.199  
+  host16: 199
   room: "chambre"
 
 packages:

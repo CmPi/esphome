@@ -1,17 +1,16 @@
 # Specific Device Configuration
 
 substitutions:
-    device_fn: "Trigboard 2"
-    device_lc: 4b417a
-    full_mac: "CC:50:E3:4B:41:7A"
-    device_type: "TrigBoard"
-    config_version: "0.1.358.19.10"
-    ip_0: 192.168.0.62  
-    pwr_mode: LIGHT
-    pwr_val: 20dB    
-    webe_api: !secret webe_api
-    webe_usrm: !secret webe_usrm    
-    webe_key: !secret webe_key
+  device_fn: "Trigboard 2"
+  device_lc: 4b417a
+  device_type: "TrigBoard"
+  config_version: "0.1.358.19.10"
+  host16: 62
+  pwr_mode: LIGHT
+  pwr_val: 20dB    
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
     
 packages:
   - !include models/device.trigboard.new.yaml            
@@ -19,7 +18,7 @@ packages:
 #Chip is ESP8266EX
 #Features: Wi-Fi, 160MHz
 #Crystal is 26MHz
-#MAC: cc50e34b417a
+#MAC: CC:50:E3:4B:41:7A
 #Manufacturer: 1c
 #Device: 3016
 #Status value: 0x0002

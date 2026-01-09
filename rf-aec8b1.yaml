@@ -9,7 +9,7 @@ substitutions:
     webe_api: !secret webe_api
     webe_usrm: !secret webe_usrm    
     webe_key: !secret webe_key
-    ip_0: 192.168.0.13   
+    host16: 13
     
 packages:
   - !include models/device.sonoff-basic-r1.yaml            

@@ -1,44 +1,23 @@
-esphome:
-  name: $device_lc
-  friendly_name: "${device_fn} mini"
-  platformio_options:
-    board_build.ldscript: eagle.flash.1m.ld
-    build_flags:
-      - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY
+#
+# @file models/sonoff-pow.yaml
+# @brief common part of a TTGO
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-02
+#
 
-esp8266:
+substitutions:
+  device_type: "basic"
   board: esp01_1m
-  board_flash_mode: dout
-
-wifi:
-  reboot_timeout: 0s
-  fast_connect: False
-  networks:
-    - ssid: !secret wifi1_ssid
-      password: !secret wifi1_password
-    - ssid: !secret wifi2_ssid
-      password: !secret wifi2_password      
-  manual_ip:
-    # Set this to the IP of the ESP
-    static_ip: ${ip_0}
-    # Set this to the IP address of the router. Often ends with .1
-    gateway: 192.168.0.1
-    # The subnet of the network. 255.255.255.0 works for most home networks.
-    subnet: 255.255.255.0    
-    dns1: 8.8.8.8        # Google DNS
-    dns2: 1.1.1.1        # Cloudflare DNS 
-
-api:
-  encryption:
-    key: !secret api_key
-  reboot_timeout: 0s  # Prevents "unavailable" status    
-
-ota:
-  - platform: esphome
-    password: !secret ota_password
+  soc_type: "ESP8266"
+  ip_0: 192.168.0.${host16}   
+  pwr_mode: NONE
+  pwr_val: 18dB
+  config_version: "0.2.9.M"
+  
+packages:
+  - !include ../packages/esphome.esp8266.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/ota.yaml    
 
 logger:
-  <<: !include .logger.none.yaml    
-
-mdns:
-  disabled: true   
+  <<: !include ../keys/logger.none.yaml    

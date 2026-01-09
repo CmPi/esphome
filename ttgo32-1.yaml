@@ -9,7 +9,7 @@ substitutions:
   device_fn: "TTGO-32-SENSORS (TFT)"
   device_sn: "ttgo32-1"
   device_lc: "0cc2c8"
-  ip_0: 192.168.0.39
+  host16: 39
   room: cuisine
   detected_flash_size: 4MB
   rotation: 270

@@ -8,10 +8,10 @@
 substitutions:
   device_fn: "WITTY"
   device_lc: 789bf8
-  ip_0: 192.168.0.46
-  room: "desk"
+  host16: 46
+  room: "salon"
 
 packages:
   - !include models/witty.yaml
 
-#     full_mac: "DC:4F:22:78:9B:F8"
+# MAC: "DC:4F:22:78:9B:F8"

@@ -6,11 +6,12 @@
 #
 
 substitutions:
-    device_fn: "VERT RGB leds"
-    device_lc: "cf15c2"
-    full_mac: "98:F4:AB:CF:15:C2"
-    ip_0: 192.168.0.37   
-    room: "salon"
+  device_fn: "VERT RGB leds"
+  device_lc: "cf15c2"
+  host16: 37
+  room: "salon"
     
 packages:
   - !include models/h801.yaml
+
+# MAC: 98:F4:AB:CF:15:C2

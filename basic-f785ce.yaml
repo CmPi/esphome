@@ -6,12 +6,12 @@
 #
 
 substitutions:
-    device_fn: "Eventail"
-    device_lc: "f785ce"
-    ip_0: 192.168.0.23   
-    room: "desk"
-    
+  device_fn: "Eventail"
+  device_lc: "f785ce"
+  host16: 23
+  room: "bureau"
+
 packages:
-  - !include models/sonoff-basic-r1.yaml            
+  - !include models/sonoff-basic-r1.mini.yaml            
 
 # MAC: DC:4F:22:F7:85:CE

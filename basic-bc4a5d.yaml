@@ -6,10 +6,10 @@
 #
 
 substitutions:
-    device_fn: "Right Bed Table"
-    device_lc: "bc4a5d"
-    ip_0: 192.168.0.21   
-    room: "chambre"
+  device_fn: "Right Bed Table"
+  device_lc: "bc4a5d"
+  host16: 21
+  room: "chambre"
     
 packages:
   - !include models/sonoff-basic-r1.yaml            

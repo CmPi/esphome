@@ -16,7 +16,7 @@ substitutions:
     webe_api: !secret webe_api
     webe_usrm: !secret webe_usrm    
     webe_key: !secret webe_key
-    room: "desk"
+    room: "bureau"
     ws2812_led_gpio: GPIO8  # used by rgb_led package
     
 <<: !include devices/esp32-c6.yaml
@@ -63,6 +63,12 @@ esp32_ble_tracker:
 # Status value: 0x0000
 # Detected flash size: 16MB
 
-#  nS6z7szT53ZvgqDcWqqIut1ejKvkKejAbCPo9X0cuc8=
-
 # https://github.com/wuxx/nanoESP32-C6
+
+# 2 ports. Un marqué ESP32C6, un CH343
+# Schéma:
+# CH343P on TXD0 et RXD0
+# ESP32C6_USB_N GPIO12
+# ESP32C6_USB_P GPIO13
+# De plus
+# LED RGB WS2812B on GPIO8

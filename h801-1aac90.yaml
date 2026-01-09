@@ -8,8 +8,8 @@
 substitutions:
   device_fn: "HRZ RGB leds"
   device_lc: "1aac90"
-  ip_0: 192.168.0.32   
-  room: "desk"
+  host16: 32
+  room: "bureau"
     
 packages:
   - !include models/h801.yaml

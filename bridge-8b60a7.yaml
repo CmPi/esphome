@@ -5,7 +5,7 @@ substitutions:
     device_lc: 8b60a7
     full_mac: "8b:60:a7"
     ip_0: 192.168.0.33
-    room: "desk"
+    room: "bureau"
 
 packages:
   - !include models/sonoff-bridge.yaml

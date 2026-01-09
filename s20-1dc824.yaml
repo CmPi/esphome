@@ -8,10 +8,13 @@
 substitutions:
   device_fn: "White lamp"
   device_lc: 1dc824
-  ip_0: 192.168.0.30  
-  room: "desk"
+  host16: 30
+  room: "bureau"
     
 packages:
   - !include models/sonoff-s20.yaml
+
+# 2 stages updates:
+# use sonoff-s20.mini.yaml as small initial firmware to be able to update to the full featured sonoff-s20.yaml later
 
 # MAC: 60:01:94:1D:C8:24

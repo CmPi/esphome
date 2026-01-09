@@ -8,7 +8,7 @@
 substitutions:
   device_fn: "ESP32-TV (TFT)"
   device_lc: "5b6ca0"
-  ip_0: 192.168.0.230
+  host16: 230
   room: salon
 
 packages:

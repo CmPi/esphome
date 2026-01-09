@@ -8,10 +8,13 @@
 substitutions:
   device_fn: "PC desk"
   device_lc: 00ac5a
-  ip_0: 192.168.0.25   
-  room: "desk"
+  host16: 25
+  room: "bureau"
     
 packages:
   - !include models/sonoff-pow.yaml            
+
+# 2 stages updates:
+# use sonoff-pow.mini.yaml as small initial firmware to be able to update to the full featured sonoff-pow.yaml later
 
 # MAC: EC:FA:BC:00:AC:5A  

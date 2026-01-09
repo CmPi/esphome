@@ -8,10 +8,13 @@
 substitutions:
   device_fn: "Eggs cooker"
   device_lc: "44068f"
-  ip_0: 192.168.0.36   
+  host16: 36
   room: "cuisine"
     
 packages:
   - !include models/sonoff-s20.yaml
+
+# 2 stages updates:
+# use sonoff-s20.mini.yaml as small initial firmware to be able to update to the full featured sonoff-s20.yaml later
 
 # MAC: "BC:DD:C2:44:06:8F"

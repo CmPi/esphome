@@ -1,11 +1,15 @@
-# Specific Device Configuration
+#
+# @file basic-f785ce.yaml
+# @brief Specific Configuration for a H801 device having ${full_mac} address
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-03
+#
 
 substitutions:
-    device_fn: "Sofa lamp"
-    device_lc: "fa68ec"
-    full_mac: "DC:4F:22:FA:68:EC"
-    ip_0: 192.168.0.22   
-    room: "salon"
+  device_fn: "Sofa lamp"
+  device_lc: "fa68ec"
+  host16: 22
+  room: "salon"
 
 packages:
   - !include models/sonoff-basic-r1-8285.yaml
@@ -13,7 +17,7 @@ packages:
 # Chip is ESP8285N08
 # Features: Wi-Fi, 160MHz, Embedded Flash
 # Crystal is 26MHz
-# MAC: dc4f22fa68ec
+# MAC: DC:4F:22:FA:68:EC
 # Manufacturer: 51 (Espressif Systems)
 # Device: 4014
 # Status value: 0x0002

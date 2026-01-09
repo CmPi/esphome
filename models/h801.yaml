@@ -9,12 +9,13 @@ substitutions:
   device_type: "h801"
   board: esp01_1m
   soc_type: "ESP8266"
+  ip_0: 192.168.0.${host16}   
   pwr_mode: NONE
   pwr_val: 18dB
   webe_api: !secret webe_api
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
-  config_version: "0.1.357"
+  config_version: "0.2.8"
 
 packages:
   - !include ../packages/esphome.esp8266.yaml

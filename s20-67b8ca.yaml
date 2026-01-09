@@ -8,10 +8,13 @@
 substitutions:
   device_fn: "Black light"
   device_lc: 67b8ca
-  ip_0: 192.168.0.31   
-  room: "desk"
+  host16: 31
+  room: "bureau"
 
 packages:
   - !include models/sonoff-s20.yaml
+
+# 2 stages updates:
+# use sonoff-s20.mini.yaml as small initial firmware to be able to update to the full featured sonoff-s20.yaml later
 
 # MAC: 80:7D:3A:67:B8:CA

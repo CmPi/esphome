@@ -8,11 +8,14 @@
 substitutions:
   device_fn: "Kettle"
   device_lc: 5e10fe
-  ip_0: 192.168.0.26   
-  room: "desk"
+  host16: 26
+  room: "bureau"
     
 packages:
-  - !include models/sonoff-pow.mini.yaml            
+  - !include models/sonoff-pow.yaml            
+
+# 2 stages updates:
+# use sonoff-pow.mini.yaml as small initial firmware to be able to update to the full featured sonoff-pow.yaml later
 
 # Info via ESPHOME/HA
 

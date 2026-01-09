@@ -9,13 +9,14 @@ substitutions:
   device_type: "pow"
   board: esp01_1m
   soc_type: "ESP8266"
+  ip_0: 192.168.0.${host16}   
   pwr_mode: NONE
   pwr_val: 18dB
   webe_api: !secret webe_api
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
   status_led_gpio: GPIO15  # used by status_led package
-  config_version: "0.2.002"
+  config_version: "0.2.8"
 
 packages:
   - !include ../packages/esphome.esp8266.yaml
@@ -23,7 +24,7 @@ packages:
   - !include ../packages/api-ota.yaml    
   - !include ../packages/min-info.yaml
   - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
-  - !include ../packages/no-webe.yaml
+  - !include ../packages/webe.yaml
 
 binary_sensor:
   - platform: gpio
@@ -74,7 +75,7 @@ sensor:
       unit_of_measurement: kWh
       accuracy_decimals: 3
       filters:
-        - multiply: 0.001 # AJOUTEZ CECI POUR LE DASHBOARD ENERGY
+        - multiply: 0.001
 
 switch:
   - platform: template

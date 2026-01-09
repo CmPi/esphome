@@ -8,10 +8,13 @@
 substitutions:
   device_fn: "TV lights"
   device_lc: 1bf2f6
-  ip_0: 192.168.0.29   
+  host16: 29
   room: "salon"
     
 packages:
   - !include models/sonoff-s20.yaml
+
+# 2 stages updates:
+# use sonoff-s20.mini.yaml as small initial firmware to be able to update to the full featured sonoff-s20.yaml later
 
 # MAC: CC:50:E3:1B:F2:F6

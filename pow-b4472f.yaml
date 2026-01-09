@@ -8,8 +8,11 @@
 substitutions:
   device_fn: "TV and Home Cinema"
   device_lc: b4472f
-  ip_0: 192.168.0.27  
-  room: "desk"
+  host16: 27
+  room: "bureau"
 
 packages:
   - !include models/sonoff-pow.yaml            
+
+# 2 stages updates:
+# use sonoff-pow.mini.yaml as small initial firmware to be able to update to the full featured sonoff-pow.yaml later

@@ -7,15 +7,16 @@
 
 substitutions:
   device_type: "s2x"
+  board: esp01_1m
   soc_type: "ESP8266"
+  ip_0: 192.168.0.${host16}   
   pwr_mode: NONE
   pwr_val: 18dB
-  status_led_gpio: GPIO13  # used by status_led package
   webe_api: !secret webe_api
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
-  board: esp01_1m
-  config_version: "0.2.002"
+  status_led_gpio: GPIO13  # used by status_led package
+  config_version: "0.3.8"
 
 packages:
   - !include ../packages/esphome.esp8266.yaml
@@ -23,7 +24,7 @@ packages:
   - !include ../packages/api-ota.yaml    
   - !include ../packages/min-info.yaml
   - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
-  - !include ../packages/no-webe.yaml
+  - !include ../packages/webe.yaml
 
 binary_sensor:
   - platform: gpio

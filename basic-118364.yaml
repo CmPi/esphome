@@ -6,10 +6,10 @@
 #
 
 substitutions:
-    device_fn: "Free SONOFF BASIC"
-    device_lc: "118364"
-    ip_0: 192.168.0.20   
-    room: "salon"
+  device_fn: "Free SONOFF BASIC"
+  device_lc: "118364"
+  host16: 20
+  room: "salon"
     
 packages:
   - !include models/sonoff-basic-r1.yaml            

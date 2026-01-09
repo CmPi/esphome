@@ -6,11 +6,11 @@
 #
 
 substitutions:
-    device_fn: "CAM JBOND"
-    device_sn: "jbond"
-    device_lc: "8a310c"
-    ip_0: 192.168.0.149
-    room: desk
+  device_fn: "CAM JBOND"
+  device_sn: "jbond"
+  device_lc: "8a310c"
+  host16: 149
+  room: "bureau"
 
 packages:
   - !include models/cam.yaml

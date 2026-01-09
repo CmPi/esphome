@@ -1,15 +1,14 @@
 # Specific Device Configuration
 
 substitutions:
-    device_fn: "Trigboard 1"
-    device_lc: 4b0f47
-    full_mac: ""
-    device_type: "TrigBoard"
-    config_version: 0.1.284
-    ip_0: 192.168.0.61
-    webe_api: !secret webe_api
-    webe_usrm: !secret webe_usrm    
-    webe_key: !secret webe_key
+  device_fn: "Trigboard 1"
+  device_lc: 4b0f47
+  device_type: "TrigBoard"
+  config_version: 0.1.284
+  host16: 61
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
     
 packages:
   - !include models/device.trigboard.yaml            

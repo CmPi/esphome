@@ -10,7 +10,7 @@ substitutions:
   device_sn: "ttgo32-2"
   device_lc: "88ed10"
   full_mac: "78:21:84:88:ed:10"
-  ip_0: 192.168.0.45 
+  host16: 45
   room: chambre
   detected_flash_size: 4MB
   rotation: 90

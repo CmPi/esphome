@@ -8,7 +8,7 @@
 substitutions:
   device_fn: "MINI R4"
   device_lc: 4a01bc
-  ip_0: 192.168.0.65   
+  host16: 65
   room: "cuisine"
 
 packages:

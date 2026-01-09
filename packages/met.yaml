@@ -36,7 +36,7 @@ binary_sensor:
                 if (id(g_option)==1) id(p1_o2).execute();
                 if (id(g_option)==2) id(p1_o3).execute();
               }
-              else if (id(g_page)==2) { // desk
+              else if (id(g_page)==2) { // bureau
                 if (id(g_option)==0) id(p2_o1).execute();
                 if (id(g_option)==1) id(p2_o2).execute();
                 if (id(g_option)==2) id(p2_o3).execute();
