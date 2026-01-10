@@ -8,13 +8,15 @@
 substitutions:
   device_type: "basic"
   board: esp01_1m
+  soc_type: "ESP8266"
+  ip_0: 192.168.0.${host16}   
   pwr_mode: NONE
   pwr_val: 18dB
   webe_api: !secret webe_api
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
   status_led_gpio: GPIO13  # used by status_led package
-  config_version: "0.2.002"
+  config_version: "0.3.10"
 
 packages:
   - !include ../packages/esphome.esp8266.yaml

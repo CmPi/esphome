@@ -6,9 +6,12 @@
 #
 
 substitutions:
-  device_type: "TTGO-8266"
-  config_version: "0.4.004"
+  device_type: "ttgo8266"
+  board: esp01_1m
+  soc_type: "ESP8266"
+  ip_0: 192.168.0.${host16}   
   pwr_mode: NONE
+  pwr_val: 18dB
   webe_api: !secret webe_api
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
@@ -16,13 +19,16 @@ substitutions:
   # display
   bw_only: true
   bl_supported: false
-
+  config_version: "0.4.004"
 
 packages:
   - !include ../packages/esphome.esp8266.yaml
   - !include ../packages/wifi-mdns.yaml
   - !include ../packages/api-ota.yaml    
-  - !include packages/display.date-time.yaml
+  # - !include ../packages/met.yaml
+  - !include ../packages/min-info.yaml
+  - !include ../packages/display.date-time.yaml
+  - !include ../packages/webe.yaml
 
 esphome:
   includes:
@@ -30,16 +36,16 @@ esphome:
     - src/met.h
 
 script:
-    - id: declare_config
+    - id: !extend declare_config
       then: 
         - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ds18b20"} }          
         - delay: 7s       
         - !include { file: ../keys/script.register.component.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
-    - id: report_uptime
+    - id: !extend report_uptime
       then: !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ontime"} }  
     - id: report_ds18b20
       then: !include { file: ../keys/script.report.component_state.yaml, vars: { sSensorDomain: "sensor", sSensorId: "ds18b20"} }  
-    - id: process_json
+    - id: !extend process_json
       then:
         - lambda: |-
             json::parse_json(id(http_rsp_body), [](JsonObject root)->bool {
@@ -84,4 +90,4 @@ script:
               return true;
             });
     
-<<: !include .display.ssd1306_i2c.yaml      
+<<: !include ../packages/display.ssd1306_i2c.yaml      

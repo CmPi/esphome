@@ -12,6 +12,7 @@ substitutions:
   room: "bureau"
 
 packages:
-  - !include models/sonoff-basic-r1.mini.yaml            
+  - !include models/sonoff-basic-r1.yaml            
+# - !include models/sonoff-minimal.yaml            
 
 # MAC: DC:4F:22:F7:85:CE

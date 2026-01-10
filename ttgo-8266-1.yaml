@@ -5,33 +5,19 @@
 #
 
 substitutions:
-    device_fn: "TTGO 8266 w/ screen"
-    device_lc: "91c19c"
-    full_mac: "68:c6:3a:91:c1:9c"
-    ip_0: 192.168.0.44    
+  device_fn: "TTGO 8266 w/ screen"
+  device_lc: "91c19c"
+  host16: 44
+  room: "bureau"
 
 packages:
   - !include models/ttgo8266.yaml
-
-
-esp8266:
-  board: esp01_1m
-
-# Enable logging
-logger:
-  level: DEBUG
-
-text_sensor:
-    - <<: !include .text_sensor.wifi_info.yaml
-    - <<: !include .text_sensor.version.yaml
- #  - <<: !include def.sensor.hermes.yaml
 
 one_wire:
   - platform: gpio
     pin: GPIO13
 
 sensor:
-  - <<: !include .sensor.uptime.yaml
   - id: ds18b20
     platform: dallas_temp
     address: 0xc3000801e355ed10
@@ -46,11 +32,10 @@ sensor:
           - delay: 5s  
           - script.execute: report_ds18b20  
 
-
 # Chip is ESP8266EX
 # Features: Wi-Fi, 160MHz
 # Crystal is 26MHz
-# MAC: 68c63a91c19c
+# MAC: 68:C6:3A:91:C1:9C
 # Manufacturer: c8
 # Device: 4016
 # Status value: 0x200002

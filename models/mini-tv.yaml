@@ -8,6 +8,7 @@
 substitutions:
   device_type: "mini-tv"
   soc_type: "ESP32-C3"
+  ip_0: 192.168.0.${host16}   
   pwr_mode: LIGHT
   pwr_val: 20dB
   detected_flash_size: 4MB

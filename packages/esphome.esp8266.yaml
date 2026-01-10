@@ -12,6 +12,7 @@ esphome:
   name: "${device_type}-${device_lc}"
   friendly_name: "$device_fn"
   platformio_options:
+    # eagle.flash.1m64.ld if LittleFS or SPIFF
     board_build.ldscript: eagle.flash.1m.ld
     build_flags:
       - -DPIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY  

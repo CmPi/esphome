@@ -1,0 +1,121 @@
+i2c:
+    sda: 2
+    scl: 14
+    scan: false 
+
+globals:
+    - id: line1
+      type: std::string
+      restore_value: no  # Strings cannot be saved/restored
+      initial_value: '""'    
+    - id: line2
+      type: std::string
+      restore_value: no  # Strings cannot be saved/restored
+      initial_value: '"${device_fn}"'    
+    - id: line3
+      type: std::string
+      restore_value: no  # Strings cannot be saved/restored
+      initial_value: '""'    
+    - id: line4
+      type: std::string
+      restore_value: no  # Strings cannot be saved/restored
+      initial_value: '""'    
+    - id: line5
+      type: std::string
+      restore_value: no  # Strings cannot be saved/restored
+      initial_value: '"SSD 1306 - I2C"'    
+    - id: line6
+      type: std::string
+      restore_value: no  # Strings cannot be saved/restored
+      initial_value: '""' 
+    - id: bTime
+      type: bool
+      restore_value: no  # Strings cannot be saved/restored
+      initial_value: 'true' 
+    - id: bGauge
+      type: bool
+      restore_value: no  # Strings cannot be saved/restored
+      initial_value: 'false' 
+    - id: bRssi
+      type: bool
+      restore_value: no  # Strings cannot be saved/restored
+      initial_value: 'false' 
+
+font:
+  - file: "fonts/Roboto-Regular.ttf"
+    id: font_half
+    size: 10
+  - file: "fonts/NovaMono-Regular.ttf"
+    id: font_time_medium
+    size: 20
+    glyphs: "0123456789:"
+  - file: "fonts/NovaMono-Regular.ttf"
+    id: font_time_big
+    size: 24
+    glyphs: "0123456789:"
+
+display:
+  - platform: ssd1306_i2c
+    id: d_main
+    model: "SSD1306 128x32"
+    reset_pin: 4
+    address: 0x3C
+    lambda: |-
+      int iWidth = 128;
+      if (id(bGauge)) {
+        iWidth = 128 - 5; 
+      }
+      int iVides = 0;
+      std::string line = id(line1);
+      if (line=="")
+        iVides|=1;
+      else
+        it.printf(        0,  0, id(font_half), COLOR_ON,      TextAlign::TOP_LEFT, "%s", line.c_str());
+      line = id(line2);
+      /*
+      if ((line=="")&(!id(bRssi)))
+       iVides|=2;
+           if (id(bRssi)) {
+        if (id(sensor_rssi).has_state())
+          it.printf( iWidth/2,  0, id(font_half), COLOR_ON,    TextAlign::TOP_CENTER, "%d", int(id(sensor_rssi).raw_state));
+      } else { */
+        it.printf( iWidth/2,  0, id(font_half), COLOR_ON,    TextAlign::TOP_CENTER, "%s", line.c_str());
+      /*} */
+      line = id(line3);
+      if (line=="")
+        iVides|=4;
+      else 
+        it.printf(   iWidth,  0, id(font_half), COLOR_ON,     TextAlign::TOP_RIGHT, "%s", line.c_str());
+      line = id(line4);
+      if (line=="")
+       iVides|=8;
+      it.printf(   iWidth, 32, id(font_half), COLOR_ON,  TextAlign::BOTTOM_RIGHT, "%s", line.c_str());
+      line = id(line5);
+      if (line=="")
+       iVides|=16;
+      it.printf( iWidth/2, 32, id(font_half), COLOR_ON, TextAlign::BOTTOM_CENTER, "%s", line.c_str());
+      line = id(line6);
+      if (line=="")
+       iVides|=32;
+      it.printf(        0, 32, id(font_half), COLOR_ON,   TextAlign::BOTTOM_LEFT, "%s", line.c_str());
+
+      if (id(bTime) | ((iVides&63)==63) | ((iVides&7)==7) )
+       it.strftime( iWidth/2, 16 - ( ((iVides&63)!=63) & ((iVides&7)==7) ? 4 : 0 ), ( ((iVides&63)==63) ? id(font_time_big) : ( ((iVides&7)==7) ? id(font_time_medium) : id(font_half) ) ), COLOR_ON, TextAlign::CENTER, "%H:%M:%S", id(esp_time).now());
+      
+      if (id(bGauge)) {
+       it.rectangle(it.get_width()-4,  0, 4, it.get_height(), COLOR_ON);
+       /*
+       if (!isnan(id(sensor_rssi).raw_state)) {
+        it.rectangle(it.get_width()-3,  10, 2, it.get_height()-11, COLOR_ON);
+       }
+       */
+      }
+
+#     std::string line = id(line1);
+#     it.print(0, 0, id(font_half), val.c_str() );
+
+
+#      it.rectangle(it.get_width()-4, 0, it.get_width()-1, it.get_height());
+#      it.rectangle(it.get_width()-3, 16, it.get_width()-1, it.get_height());
+#      it.print(5, 5, id(helvetica_12), id(my_yellow), TextAlign::TOP_LEFT, "jWebeClient - ttgo32");      
+

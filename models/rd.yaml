@@ -40,3 +40,33 @@ packages:
   - !include ../packages/sys-info.yaml    
   - !include ../packages/led-rgb-ws2812.yaml    
   - !include ../packages/webe.yaml
+
+
+#
+# https://www.aliexpress.com/item/1005009554059578.html
+# https://github.com/vcc-gnd/YD-ESP32-S3  
+
+
+
+# BOOT - GPIO0
+# RGB  - GPIO48
+# TX   - GPIO43
+# RX   - GPIO44
+
+
+
+# Two USB-C ports (one for power only, one for power and data). 
+# Mounted by windows as:
+# USB: USB JTAG/serial debug unit
+# COM: USB Single Serial
+
+# Sensors:
+# ENS160  Digital Metal-Oxide Multi-Gas Sensor
+# LD2450  LD2450 Human Presence Sensor
+# SCD40   NDIR CO2 sensor
+# SHT40   RH Digital humidity and temperature sensor
+
+# Board: 
+# YD-ESP32-23
+# 2022-v1.3
+

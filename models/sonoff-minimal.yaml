@@ -1,18 +1,20 @@
 #
-# @file models/sonoff-pow.yaml
-# @brief common part of a TTGO
+# @file models/sonoff-minimal.yaml
+# @brief minimal Sonoff device configuration for ESPHome - Enables two stages updates
 # @author CmPi <github.com/CmPi>
 # @date creation 2026-01-02
 #
+# ESPHOME 2025.12.5 - 295872 bytes
+#
 
 substitutions:
-  device_type: "pow"
+  device_type: "sonoff"
   board: esp01_1m
   soc_type: "ESP8266"
   ip_0: 192.168.0.${host16}   
   pwr_mode: NONE
   pwr_val: 18dB
-  config_version: "0.2.8.M"
+  config_version: "0.2.9.MINI"
 
 packages:
   - !include ../packages/esphome.esp8266.yaml
