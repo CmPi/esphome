@@ -8,6 +8,7 @@
 substitutions:
   device_type: "ttgo32"
   soc_type: "ESP32"
+  ip_0: 192.168.0.${host16}   
   pwr_mode: NONE
   pwr_val: 18dB
   webe_api: !secret webe_api
@@ -19,7 +20,7 @@ substitutions:
   # pages and menus
   bs_select_gpio: GPIO00
   bs_next_gpio: GPIO35
-  config_version: "0.2.006"
+  config_version: "0.2.10"
 
 esphome:
   platformio_options:
@@ -47,7 +48,7 @@ packages:
   - !include ../packages/display.date-time.yaml
   - !include ../packages/display.back-light.yaml
   - !include ../packages/weather.yaml
-  - !include ../packages/sys-info.yaml
+  - !include ../packages/min-info.yaml
 
 binary_sensor:
   - id: !extend bs_select
