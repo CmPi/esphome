@@ -1,0 +1,24 @@
+#
+# @file hermes-1.yaml
+# @brief Specific Device Configuration
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-16
+#
+
+substitutions:
+  device_fn: "HERMES 1"
+  device_lc: "0dc150"
+  host16: 41
+  room: "cuisine"
+  detected_flash_size: 4MB
+
+packages:
+  - !include models/hermes.yaml
+
+# ESP32-D0WD (revision 1)
+
+# ECO1 (r1) e8:68:e7:0d:c1:50 (MAC)
+# 4MB
+ 
+# Coeurs : 2 (Dual)
+# Fréquence CPU max : 240 MHz
