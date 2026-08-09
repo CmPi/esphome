@@ -6,10 +6,10 @@
 #
 
 substitutions:
-  device_fn: "Eggs cooker"
+  device_fn: "Mosquitoes Repeller"
   device_lc: "44068f"
   host16: 36
-  room: "cuisine"
+  room: "chambre"
     
 packages:
   - !include models/sonoff-s20.yaml
