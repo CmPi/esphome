@@ -9,6 +9,7 @@ substitutions:
   device_type: "mini-r4"
   board: "esp32dev"
   soc_type: "ESP32"
+  ip_0: 192.168.0.${host16}   
   pwr_mode: LIGHT
   pwr_val: 20dB
   webe_api: !secret webe_api

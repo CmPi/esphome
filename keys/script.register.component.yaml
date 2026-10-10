@@ -8,10 +8,12 @@ http_request.post:
     root["id"] = "${sSensorId}";
     root["domain"] = "${sSensorDomain}";
     root["name"] = id(${sSensorId}).get_name();
-    root["api_id"] = id(${sSensorId}).get_object_id();
-    auto icon = id(${sSensorId}).get_icon_ref();
-    root["icon"] = icon.empty() ? "(undefined)" : icon.str();
-    root["unit_of_measurement"] = id(${sSensorId}).get_unit_of_measurement_ref();
+    char obj_id_buf[128];
+    root["api_id"] = id(${sSensorId}).get_object_id_to(obj_id_buf).str();
+    char icon_buf[64];
+    const char* icon = id(${sSensorId}).get_icon_to(icon_buf);
+    root["icon"] = (icon && icon[0]) ? icon : "(undefined)";
+    root["unit_of_measurement"] = id(${sSensorId}).get_unit_of_measurement_ref().str();
     root["accuracy_decimals"] = id(${sSensorId}).get_accuracy_decimals();
     root["app"] = "ESPHome";
     root["usrm"] = "${webe_usrm}";

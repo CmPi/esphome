@@ -1,0 +1,54 @@
+#
+# @file models/hermes.yaml
+# @brief common part of a TTGO
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-01-16
+#
+
+substitutions:
+  device_type: "hermes32"
+  soc_type: "ESP32"
+  ip_0: 192.168.0.${host16}   
+  pwr_mode: NONE
+  pwr_val: 18dB
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  config_version: "0.4.16"
+
+packages:
+  - !include ../packages/esphome.dio.yaml
+
+
+esphome:
+  platformio_options:
+    board_build.flash_mode: dio
+
+external_components:
+  - source: github://CmPi/myEhThings
+    components: [ remote_base ]
+    refresh: 0s
+
+
+esp32:
+  board: esp32doit-devkit-v1
+  framework:
+    type: esp-idf
+# framework:
+#   type: arduino
+
+globals:
+  - id: sBuffer
+    type: std::string
+    restore_value: No
+
+remote_receiver:
+  id: srx882
+  pin:
+    number: 4
+# mode: 
+#   input: true
+  tolerance: 35%
+  filter: 150us
+  dump: 
+    - lacrosse

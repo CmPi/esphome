@@ -3,6 +3,7 @@
 # @brief Configuration package for RGB light devices
 # @author CmPi <github.com/CmPi>
 # @date creation 2026-01-03
+# @date update 2026-10-10 added scripts for blinking effects
 #
 
 light:
@@ -13,4 +14,50 @@ light:
     num_leds: 1       # Number of LEDs in your strip
     chipset: WS2812
     name: "LED RGB"
+    effects:
+      - pulse:
+          name: "Pulse"
+          transition_length: 0.5s
+          update_interval: 1s
+          min_brightness: 0%
+          max_brightness: 100%
 
+script:
+  - id: led_rgb_blink_green
+    mode: restart
+    then:
+      - light.turn_on:
+          id: l_rgb
+          red: 0.0
+          green: 0.4
+          blue: 0.0
+      - delay: 0.5s
+      - light.turn_off: l_rgb
+      - delay: 4.5s
+      - script.execute: led_rgb_blink_green
+
+  - id: led_rgb_blink_red
+    mode: restart
+    then:
+      - light.turn_on:
+          id: l_rgb
+          red: 0.4
+          green: 0.0
+          blue: 0.0
+      - delay: 0.5s
+      - light.turn_off: l_rgb
+      - delay: 2.5s
+      - script.execute: led_rgb_blink_red
+
+  - id: led_rgb_blink_white
+    mode: restart
+    then:
+      - light.turn_on:
+          id: l_rgb
+          red: 0.4
+          green: 0.4
+          blue: 0.4
+      - delay: 0.5s
+      - light.turn_off: l_rgb
+      - delay: 9.5s
+      - script.execute: led_rgb_blink_white

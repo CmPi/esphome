@@ -1,0 +1,112 @@
+#
+# @file audio-pcm1502.yaml
+# @brief Common configuration for an ESP32-S3 with a PCM1502 audio DAC 
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-10-10
+#
+
+substitutions:
+  device_type: "pcm1502"
+  board: esp32-s
+  soc_type: "ESP32"
+  ip_0: 192.168.0.${host16}   
+  pwr_mode: NONE
+  pwr_val: 18dB
+  webe_api: !secret webe_api
+  webe_usrm: !secret webe_usrm    
+  webe_key: !secret webe_key
+  config_version: "0.1.280"
+  ws2812_led_gpio: GPIO48
+
+esp32:
+  variant: esp32s3
+  framework:
+    type: esp-idf
+  flash_size: 16MB
+
+packages:
+  - !include ../packages/esphome.dio.yaml
+  - !include ../packages/wifi-mdns.yaml
+  - !include ../packages/api-ota.yaml    
+  - !include ../packages/led-rgb-ws2812.yaml  
+  - !include ../packages/min-info.yaml
+  - !include ../packages/no-webe.yaml  
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+audio_file:
+  - id: startup_sound
+    file: "../sounds/startup.wav"  
+
+# Virtual button for testing the sound anytime (stops current stream first)
+button:
+  - platform: template
+    name: "Stop and test Startup sound"
+    id: test_chime_button
+    on_press:
+      - media_player.stop: music_player
+      - media_player.play_media:
+          id: music_player
+          media_url: "audio-file://startup_sound"
+
+i2s_audio:
+  - id: i2s_out
+    i2s_lrclk_pin: GPIO21
+    i2s_bclk_pin: GPIO5
+
+speaker:
+  - platform: i2s_audio
+    id: dac_speaker
+    i2s_audio_id: i2s_out
+    i2s_dout_pin: GPIO19
+    dac_type: external
+    sample_rate: 48000
+    channel: stereo
+
+sendspin:
+
+media_source:
+  - platform: sendspin
+    id: sendspin_source
+  - platform: audio_file
+    id: audio_file_source    
+
+media_player:
+  - platform: speaker_source
+    id: music_player
+    name: "ESP32 Music Player"
+    media_pipeline:
+      speaker: dac_speaker
+      sources:
+        - sendspin_source
+    on_play:
+      - script.execute:
+          id: led_rgb_blink_green
+    on_pause:
+      - light.turn_on:
+          id: l_rgb
+          red: 100%
+          green: 0%
+          blue: 0%
+          brightness: 50%
+          effect: "Pulse"
+    on_idle:
+      - light.turn_on:
+          id: l_rgb
+          red: 100%
+          green: 100%
+          blue: 100%
+          white: 100%
+          brightness: 50%
+          effect: "Pulse"
+
+
+#mdns:
+#  disabled: false
+
+# Enable logging
+
+logger:
+  <<: !include ../keys/logger.debug.yaml   

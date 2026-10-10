@@ -8,6 +8,7 @@
 substitutions:
   device_type: "s2x"
   soc_type: "ESP8266"
+  ip_0: 192.168.0.${host16}   
   board: esp01_1m
 
 packages:

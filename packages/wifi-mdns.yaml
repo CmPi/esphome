@@ -26,6 +26,7 @@ wifi:
     subnet: 255.255.255.0    
     dns1: 1.1.1.1        # Cloudflare DNS 
     dns2: 8.8.8.8        # Cloudflare DNS 
+  use_address: ${ip_0}
       
 mdns:
-  disabled: true
+  disabled: false

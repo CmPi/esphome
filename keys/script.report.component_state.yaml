@@ -8,7 +8,10 @@ http_request.post:
     root["value"] = id(${sSensorId}).state;
     root["sensor"] = "${sSensorId}";
     root["domain"] = "${sSensorDomain}";
-    root["api_id"] = id(${sSensorId}).get_object_id();
+    // root["api_id"] = id(${sSensorId}).get_object_id();
+    char sObjectId[128]; 
+    id(${sSensorId}).get_object_id_to(sObjectId);
+    root["api_id"] = sObjectId;    
     root["app"] = "ESPHome";
     root["usrm"] = "${webe_usrm}";
     root["key"] = "${webe_key}";

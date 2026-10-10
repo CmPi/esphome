@@ -20,7 +20,7 @@ substitutions:
   # pages and menus
   bs_select_gpio: GPIO00
   bs_next_gpio: GPIO35
-  config_version: "0.2.10"
+  config_version: "0.2.13"
 
 esphome:
   platformio_options:
@@ -98,7 +98,7 @@ sensor:
 
 # Enable logging
 logger:
-  <<: !include ../keys/logger.error.yaml   
+  <<: !include ../keys/logger.debug.yaml   
 
 mdns:
-  disabled: true    
+  disabled: false    

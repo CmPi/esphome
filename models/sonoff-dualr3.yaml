@@ -9,6 +9,7 @@ substitutions:
   device_type: "r3v2"
   board: "esp32dev"
   soc_type: "ESP32"
+  ip_0: 192.168.0.${host16}   
   pwr_mode: LIGHT
   pwr_val: 18dB
   webe_api: !secret webe_api

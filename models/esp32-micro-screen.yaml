@@ -20,9 +20,10 @@ esp32:
 
 # I2C for the screen (GPIO5=SDA, GPIO6=SCL)
 i2c:
-  sda: GPIO5
-  scl: GPIO6
-  scan: true
+  - id: i2c0 
+    sda: GPIO5
+    scl: GPIO6
+    scan: true
 
 # Enable logging
 logger:

@@ -9,10 +9,11 @@ substitutions:
   device_type: "cam"
   board: "esp32cam"
   soc_type: "ESP32"
+  ip_0: 192.168.0.${host16}   
   pwr_mode: NONE
   pwr_val: 20dB
   detected_flash_size: 4MB
-  config_version: "0.1.006"
+  config_version: "1.1.10"
 
 esp32:
   board: esp32cam
@@ -30,15 +31,21 @@ psram:
   mode: quad
   speed: 80MHz
 
+i2c:
+  - id: i2c0
+    sda: GPIO26
+    scl: GPIO27
+    scan: false
+
 esp32_camera:
   id: cam_${device_sn}
   name: "ESP32 CAM Photo"
   external_clock:
-    pin: GPIO0
+    pin: 
+      number: GPIO0
+      ignore_strapping_warning : true
     frequency: 20MHz
-  i2c_pins:
-    sda: GPIO26
-    scl: GPIO27  
+  i2c_id: i2c0
   data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
   vsync_pin: GPIO25
   href_pin: GPIO23
@@ -47,7 +54,10 @@ esp32_camera:
   # Qualité et résolution
   max_framerate: 15 fps
   resolution: 800x600
-  jpeg_quality: 10  # 10 = qualité max, 63 = qualité min    
+  jpeg_quality: 30  # 10 = qualité max, 63 = qualité min    
+  # Rotation 180°
+  vertical_flip: false
+  horizontal_mirror: false
 
 output:
   - platform: gpio
@@ -57,9 +67,15 @@ output:
 light:
   - platform: binary
     output: flash_led
-    name: "Flash LED ESP32-CAM"
+    name: "Flash Lamp"
 
 button:
+  # Reboot switch (after OTA for example)
+  - platform: restart
+    id: b_restart
+    name: "Reboot"
+    icon: "mdi:restart"
+    entity_category: diagnostic
   - platform: template
     name: "Prendre photo ESP32-CAM"
     on_press:
@@ -69,3 +85,35 @@ button:
             entity_id: camera.cam_${device_sn}
             filename: "/config/www/snapshots/esp32cam_{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
 
+api:
+  services:  # change camera parameters on-the-fly
+    - service: camera_set_param
+      variables:
+        name: string
+        value: int
+      then:
+        - lambda: |-
+            bool state_return = false;
+            if (("contrast" == name) && (value >= -2) && (value <= 2)) { id(cam_${device_sn}).set_contrast(value); state_return = true; }
+
+            // Vertical flip: 0 or 1
+            if (("vertical_flip" == name) && (value >= 0) && (value <= 1)) {
+              id(cam_${device_sn}).set_vertical_flip(value);
+              state_return = true;
+            }
+            // Horizontal mirror: 0 or 1
+            if (("horizontal_mirror" == name) && (value >= 0) && (value <= 1)) {
+              id(cam_${device_sn}).set_horizontal_mirror(value);
+              state_return = true;
+            }
+
+            if (true == state_return) {
+              id(cam_${device_sn}).update_camera_parameters();
+            }
+
+# Example configuration entry
+esp32_camera_web_server:
+  - port: 8080
+    mode: stream
+  - port: 8081
+    mode: snapshot

@@ -8,12 +8,14 @@
 substitutions:
   device_type: "basic"
   board: esp01_1m
+  soc_type: "ESP8285"
+  ip_0: 192.168.0.${host16}   
   pwr_mode: NONE
   pwr_val: 18dB
   webe_api: !secret webe_api
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
-  config_version: "0.2.004"
+  config_version: "0.2.22"
   status_led_gpio: GPIO13  # used by status_led package
 
 packages:
