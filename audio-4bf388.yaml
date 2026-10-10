@@ -2,7 +2,7 @@
 # @file audio-4bf388.yaml
 # @brief Specific Configuration for an ESP32-S3 device with a PCM1502 having ${full_mac} address
 # @author CmPi <github.com/CmPi>
-# @date creation 2026-01-03
+# @date creation 2026-10-10
 #
 
 substitutions:
