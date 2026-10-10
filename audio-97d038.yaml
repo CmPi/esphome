@@ -9,7 +9,7 @@ substitutions:
   device_fn: "Audio bridge 2"
   device_lc: "4bf388"
   host16: 212
-  room: "salon"
+  room: "Chambre"
 
 packages:
   - !include models/audio-pcm1502.yaml  
