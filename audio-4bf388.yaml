@@ -8,9 +8,8 @@
 substitutions:
   device_fn: "Audio Device with PCM1502"
   device_lc: "4bf388"
-  host16: 101
+  host16: 189
   room: "salon"
 
-  packages:
+packages:
   - !include models/audio-pcm1502.yaml  
-  
