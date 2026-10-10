@@ -7,7 +7,7 @@
 
 substitutions:
   device_fn: "Audio bridge 2"
-  device_lc: "4bf388"
+  device_lc: "97d038"
   host16: 212
   room: "Chambre"
 
