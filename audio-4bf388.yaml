@@ -12,6 +12,5 @@ substitutions:
   room: "Chambre"
   detected_flash_size: 16MB
 
-
 packages:
   - !include models/audio-pcm1502.yaml  
