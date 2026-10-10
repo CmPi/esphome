@@ -9,7 +9,8 @@ substitutions:
   device_fn: "Audio bridge 2"
   device_lc: "97d038"
   host16: 212
-  room: "Chambre"
+  room: "Bureau"
+  detected_flash_size: 16MB
 
 packages:
   - !include models/audio-pcm1502.yaml  
