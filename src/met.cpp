@@ -432,7 +432,8 @@ void menuDrawAboutPage(
     deviceName = App.get_name();
     #endif
     
-    buildTime = App.get_compilation_time();
+//  buildTime = App.get_compilation_time();
+    buildTime = __DATE__ " " __TIME__;
     if (buildTime.length() > 11) buildTime = buildTime.substr(0, 11);
     
     #ifdef USE_WIFI
@@ -465,9 +466,9 @@ void menuDrawAboutPage(
     snprintf(fragStr, sizeof(fragStr), "%d%%", fragmentation);
     
     if (days > 0) {
-        snprintf(uptimeStr, sizeof(uptimeStr), "%dd %dh", days, hours);
+        snprintf(uptimeStr, sizeof(uptimeStr), "%dd %dh", (int) days, (int) hours);
     } else if (hours > 0) {
-        snprintf(uptimeStr, sizeof(uptimeStr), "%dh %dm", hours, minutes);
+        snprintf(uptimeStr, sizeof(uptimeStr), "%dh %dm", (int) hours, (int) minutes);
     } else {
         snprintf(uptimeStr, sizeof(uptimeStr), "%dm", minutes);
     }

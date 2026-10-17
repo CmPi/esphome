@@ -13,8 +13,10 @@ font:
     file: "fonts/DSEG14Classic-Bold.ttf"
     size: 22
     glyphs: "0123456789:~"
+    ignore_missing_glyphs: true
   - id: f_date
     file: "fonts/DSEG14Classic-Regular.ttf"
     size: 12
     glyphs: "0123456789/~"
+    ignore_missing_glyphs: true
 

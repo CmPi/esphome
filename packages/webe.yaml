@@ -47,28 +47,27 @@ script:
             root["name"] = "${device_fn}";
             root["wifi"]["ip"] = "0.0.0.0";
             // --- Conditional Wi-Fi Information ---
-              #if defined(USE_ESP8266)
-                // ESP8266 is more forgiving and uses standard Arduino definitions
-                root["wifi"]["mac"] = WiFi.macAddress().c_str();
-                if (id(n_main).is_connected()) {
-                  root["wifi"]["ip"] = WiFi.localIP().toString().c_str();
+            #if defined(USE_ESP8266)
+              // ESP8266 is more forgiving and uses standard Arduino definitions
+              root["wifi"]["mac"] = std::string(WiFi.macAddress().c_str());
+              if (id(n_main).is_connected()) {
+                root["wifi"]["ip"] = std::string(WiFi.localIP().toString().c_str());
+              } else {
+                root["wifi"]["ip"] = "0.0.0.0";
+              }
+            #elif defined(USE_ESP32)
+              root["wifi"]["mac"] = esphome::get_mac_address();
+              if (id(n_main).is_connected()) {
+                auto ips = id(n_main).get_ip_addresses();
+                if (!ips.empty()) {
+                  char ip_buf[40];
+                  ips[0].str_to(ip_buf);
+                  root["wifi"]["ip"] = std::string(ip_buf);
                 } else {
                   root["wifi"]["ip"] = "0.0.0.0";
                 }
-              #elif defined(USE_ESP32)
-                // --- ESP32/ESP-IDF FIXES ---
-                // 1. MAC address: Use ESPHome native function
-                root["wifi"]["mac"] = esphome::get_mac_address().c_str(); 
-
-                if (id(n_main).is_connected()) {
-                  auto ips = id(n_main).get_ip_addresses();
-                  if (!ips.empty()) {
-                    root["wifi"]["ip"] = ips[0].str().c_str();
-                  } else {
-                    root["wifi"]["ip"] = "0.0.0.0";
-                  }
-                }
-              #endif          
+              }
+            #endif
             root["versions"]["config"] = "${config_version}";
             root["app"] = "ESPHome";
             root["usrm"] = "${webe_usrm}";
