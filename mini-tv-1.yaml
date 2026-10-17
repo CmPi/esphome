@@ -7,7 +7,7 @@
 #
 
 substitutions:
-  device_fn: "ESP32-TV (TFT)"
+  device_fn: "ESP32-TV"
   device_lc: "5b6ca0"
   host16: 230
   room: salon
