@@ -1,0 +1,31 @@
+#
+# @file packages/sendspin-off.yaml
+# @brief Stand-ins used instead of sendspin-image.yaml when enable_sendspin is "false"
+# @author CmPi <github.com/CmPi>
+#
+# The display lambda in met.yaml mentions music_playing, s_cover_only and album_art.
+# ESPHome resolves every id() found in a lambda, so these ids must exist even when
+# sendspin is switched off. Here they exist but do nothing: music_playing stays false,
+# so the cover is never drawn.
+#
+
+globals:
+  - id: music_playing
+    type: bool
+    initial_value: 'false'
+
+switch:
+  - platform: template
+    id: s_cover_only
+    name: "Cover only"
+    internal: true
+    optimistic: true
+    restore_mode: ALWAYS_OFF
+
+# tiny placeholder image (never displayed)
+image:
+  - platform: file
+    file: images/pulse-128x128.png
+    id: album_art
+    type: BINARY
+    resize: "8x8"

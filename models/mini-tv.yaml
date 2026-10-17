@@ -24,6 +24,11 @@ substitutions:
   bs_next_gpio: GPIO10
   # status LED GPIO (required by package/status_led.yaml)
   status_led_gpio: GPIO11 
+  # does this module with a screen displays cover art from Sendspin? (false by default)
+  enable_sendspin: "false"
+  sendspin_pkg: !include ../packages/sendspin-image.yaml
+  sendspin_off_pkg: !include ../packages/sendspin-image-off.yaml
+  # secrets
   webe_api: !secret webe_api
   webe_usrm: !secret webe_usrm    
   webe_key: !secret webe_key
@@ -59,8 +64,8 @@ packages:
   - !include ../packages/display.menu.yaml
   - !include ../packages/display.date-time.yaml
   - !include ../packages/weather.yaml
-  - !include ../packages/sendspin-image.yaml
-  - !include ../packages/bermuda.yaml # for bluetooth scanning (safe for an ESP32-C3)
+  - ${ sendspin_pkg if (enable_sendspin | string | lower) == 'true' else sendspin_off_pkg }
+# - !include ../packages/bermuda.yaml # for bluetooth scanning (safe for an ESP32-C3)
   - !include ../packages/webe.yaml
 
 # --- SPI BUS -----------------------------------------------------
@@ -84,10 +89,11 @@ display:
   - id: d_main
     platform: mipi_spi
     model: ST7735
-    rotation: 0
+    rotation: 180
     dimensions:
       width: 128
       height: 160
+      pad_width : 2
     color_order: bgr
     invert_colors: false
     cs_pin: GPIO2

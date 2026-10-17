@@ -5,14 +5,25 @@
 # @date creation 2026-10-17
 #
 
-
-# Enable the Sendspin client hub
-sendspin:
-
 globals:
   - id: music_playing
     type: bool
     initial_value: 'false'
+
+switch:
+  - platform: template
+    id: s_cover_only
+    name: "Cover only"
+    icon: mdi:album
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - component.update: d_main
+    on_turn_off:
+      - component.update: d_main    
+
+# Enable the Sendspin client hub
+sendspin:
 
 # Set up the image handler to grab album art and resize it to your 128x128 screen
 image:
@@ -25,7 +36,18 @@ image:
       id: album_art
     on_image_display:
       - lambda: |-
-          // Mark that music is playing and update last interaction time
           id(music_playing) = true;
           id(last_interaction) = millis();    
       - component.update: d_main
+    on_image_clear:
+      - then:
+          - lambda: |-
+              id(music_playing) = false;
+          - component.update:
+              id: d_main
+    on_image_error:
+      - lambda: |-
+          ESP_LOGW("sendspin", "artwork decode error");
+          
+mdns:
+  disabled: false

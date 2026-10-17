@@ -3,6 +3,10 @@
 # @author CmPi <github.com/CmPi>
 #
 
+substitutions:
+  cover_duration_ms: "10000"
+  home_duration_ms: "10000"
+
 
 
 binary_sensor:
@@ -23,9 +27,8 @@ binary_sensor:
                   id(turn_on_backlight).execute();
                   return;
                 } else 
-                // off
-                if (id(g_page) == 0) {  // If not home page   
-                  // turn off backlight and stop further processing
+                // on the home page: turn off backlight and stop further processing
+                if (id(g_page) == 0) {
                   id(turn_off_backlight).execute();
                   return;
                 }
@@ -110,75 +113,53 @@ sensor:
 display:
   - id: !extend d_main
     lambda: |-
-      met.init( it, false, id(esp_time), id(real_width), id(real_height) );
+      met.init( it,
+                { id(f_small_16), id(f_mini_12), id(f_icons), id(font_weather), id(f_micro_8), id(f_time), id(f_date) },
+                false, id(esp_time), id(real_width), id(real_height) );
+
       if (id(g_ota_pb)>=0) {
-        met.drawProgressPage( it, id(f_small_16), "OTA Update...", id(g_ota_pb) );
+        met.drawProgressPage( "OTA Update...", id(g_ota_pb) );
         return;
-      }    
+      }
+
+      // Music playing (Home page only, not in a menu): show the album cover, either all the
+      // time (switch "Cover only") or alternating with the Home screen:
+      // cover for cover_duration_ms, then Home for home_duration_ms.
+      if (id(g_page) == 0 && !id(in_menu) && id(music_playing)) {
+        const uint32_t cover_ms = ${cover_duration_ms};
+        const uint32_t home_ms = ${home_duration_ms};
+        const uint32_t cycle_ms = cover_ms + home_ms;
+        const bool show_cover = id(s_cover_only).state || cycle_ms == 0 || (millis() % cycle_ms) < cover_ms;
+        if (show_cover) {
+          it.fill(Color(0x000000));
+          it.image(0, 0, id(album_art));   // 128x128 cover, adjust x/y if your panel needs it
+          return;
+        }
+      }
+
+
       const char* titles[6] = { "Home", "Living Room", "Desk / Homelab", "Kitchen", "Main bedroom", "About..." };
-      met.drawPageTitle( it, id(f_small_16), titles[id(g_page)],id(in_menu),id(g_page)>0 );
+      met.drawPageTitle( titles[id(g_page)], id(in_menu), id(g_page)>0 );
 
       if (id(g_page) == 0) {
-          // Draw time and date using DSEG fonts
-          met.drawTimeAndDate(it, id(f_time), id(f_date), id(esp_time));
-          
-          // Draw weather icon(s) and moon phase (day: centered, night: split left/right)
-          met.drawWeatherAndMoon(it, id(font_weather), id(f_micro_8), id(ha_weather_condition), id(moon_phase_icon), id(esp_time));
-
-          // Draw weather information boxes
-          met.drawBottomBoxes( it,  
-                           id(f_mini_12),  
-                           id(f_icons), 
-                           isnan(id(ha_weather_temperature).state) ? 0 : id(ha_weather_temperature).state, 
-                           isnan(id(ha_weather_humidity).state) ? 0 : id(ha_weather_humidity).state, 
-                           isnan(id(ha_weather_pression).state) ? 0 : id(ha_weather_pression).state 
-                           );
-
-      }  else {
-        // ---- PAGES 2–5 ----
-
-      if (id(g_page)==1) { // living room
-        met.drawOptionsPage( it, id(f_small_16), id(g_option), id(st_p1_o1), id(st_p1_o2), id(st_p1_o3) );
-        met.drawBottomBoxes( it,  
-                           id(f_mini_12),  
-                           id(f_icons), 
-                           isnan(id(tx3_lr_t).state) ? 0 : id(tx3_lr_t).state, 
-                           isnan(id(tx3_lr_h).state) ? 0 : id(tx3_lr_h).state, 0 );
-      }
-      
-      if (id(g_page)==2) { // desk
-        met.drawOptionsPage( it, id(f_small_16), id(g_option), id(st_p2_o1), id(st_p2_o2) );
-          met.drawBottomBoxes( it,  
-                           id(f_mini_12),  
-                           id(f_icons), 
-                           37.9, 
-                           65.5, 
-                           0 
-                           );
-      }
-      
-      if (id(g_page)==3) { // kitchen
-        met.drawOptionsPage( it, id(f_small_16), id(g_option), id(st_p3_o1), id(st_p3_o2) );
-          met.drawBottomBoxes( it,  
-                           id(f_mini_12),  
-                           id(f_icons), 
-                           isnan(id(tx3_k_t).state) ? 0 : id(tx3_k_t).state, 
-                           0, 
-                           0 
-                           );
-      }
-      if (id(g_page)==4) { // bedroom
-          met.drawBottomBoxes( it,  
-                           id(f_small_16),  
-                           id(f_icons), 
-                           isnan(id(tx3_br_t).state) ? 0 : id(tx3_br_t).state, 
-                           isnan(id(tx3_br_h).state) ? 0 : id(tx3_br_h).state, 
-                           0 
-                           );
-      }
-      if (id(g_page)==5) {
-        met.menuDrawAboutPage(it,id(f_mini_12),false);
-      }
+        met.drawTimeAndDate();
+        // weather icon(s) and moon phase (day: centered, night: split left/right)
+        met.drawWeatherAndMoon( id(ha_weather_condition), id(moon_phase_icon) );
+        // NaN (no value yet) hides humidity / pressure; temperature shows "--.-"
+        met.drawBottomBoxes( id(ha_weather_temperature), id(ha_weather_humidity), id(ha_weather_pression) );
+      } else if (id(g_page)==1) { // living room
+        met.drawOptionsPage( id(g_option), id(st_p1_o1), id(st_p1_o2), id(st_p1_o3) );
+        met.drawBottomBoxes( id(tx3_lr_t), id(tx3_lr_h) );
+      } else if (id(g_page)==2) { // desk
+        met.drawOptionsPage( id(g_option), id(st_p2_o1), id(st_p2_o2) );
+        met.drawBottomBoxes( 37.9f, 65.5f );  // TODO: hardcoded test values, replace by sensors
+      } else if (id(g_page)==3) { // kitchen
+        met.drawOptionsPage( id(g_option), id(st_p3_o1), id(st_p3_o2) );
+        met.drawBottomBoxes( id(tx3_k_t) );
+      } else if (id(g_page)==4) { // bedroom
+        met.drawBottomBoxes( id(tx3_br_t), id(tx3_br_h) );
+      } else if (id(g_page)==5) {
+        met.menuDrawAboutPage();
       }
 
 # --- FONTS -------------------------------------------------------
@@ -203,7 +184,7 @@ ota:
             if (id(g_bl)) {
               id(last_interaction) = millis();
               if (!id(bl_on) ) {
-                backlight_on_for_ota(true);
+                met.backlightOnForOta(true);
                 id(bl_on) = true;
               }
             }
@@ -225,11 +206,8 @@ ota:
             id: d_main
     on_end:
       then:
-        - globals.set:
-            id: g_ota_pb
-            value: '-1'
         - lambda: |-
-            id(g_ota_pb) = 100;  // x is the progress percentage (0-100)
+            id(g_ota_pb) = 100;
             id(last_interaction) = millis();
         - component.update:
             id: d_main

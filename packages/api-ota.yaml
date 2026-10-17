@@ -12,7 +12,7 @@ api:
 
 ota:
   - platform: esphome
-    password: !secret ota_password
+#   password: !secret ota_password # removed as no more required since ESPHome 2026-10-17 (api encryption key is used for OTA too)
     
 safe_mode:
   disabled: false
