@@ -177,7 +177,7 @@ font:
 
 ota:
   - platform: esphome
-    password: !secret ota_password
+#   password: !secret ota_password
     on_begin:
       then:
         - lambda: |-

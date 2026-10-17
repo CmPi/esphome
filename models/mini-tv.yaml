@@ -55,7 +55,7 @@ image:
 packages:
   - !include ../packages/esphome.dio.yaml
   - !include ../packages/wifi-mdns.yaml
-  - !include ../packages/api-ota.yaml    
+  - !include ../packages/api.yaml    
   - !include ../packages/status_led.yaml # do not forget to define status_led_gpio in substitutions
   - !include ../packages/met.yaml
   - !include ../packages/min-info.yaml
@@ -96,7 +96,9 @@ display:
       pad_width : 2
     color_order: bgr
     invert_colors: false
-    cs_pin: GPIO2
+    cs_pin: 
+      number: GPIO2
+      ignore_strapping_warning: true
     dc_pin: GPIO0
     reset_pin: GPIO5
     spi_id: spi_bus
@@ -118,6 +120,7 @@ binary_sensor:
       number: ${bs_select_gpio}
       mode: INPUT_PULLUP
       inverted: true
+      ignore_strapping_warning: true
   - id: !extend bs_next
     platform: gpio
     pin:
@@ -131,4 +134,4 @@ mdns:
   disabled: false
 
 logger:
-  <<: !include ../keys/logger.debug.yaml   
+  <<: !include ../keys/logger.none.yaml  

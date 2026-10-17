@@ -1,0 +1,14 @@
+#
+# @file packages/api-ota.yaml
+# @brief Common API configuration package (used when OTA defined in another package - e.g. ota.yaml or met.yaml)
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-10-17
+#
+
+api:
+  encryption:
+    key: !secret api_key
+  reboot_timeout: 10min  
+
+safe_mode:
+  disabled: false
