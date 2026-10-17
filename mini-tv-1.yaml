@@ -13,7 +13,7 @@ substitutions:
   room: salon
   detected_flash_size: 16MB
   config_version: "1.2.100.1526"
-  enable_sendspin: "false"  # Set to "false" to disable sendspin entirely  
+  enable_sendspin: "true"  
 
 packages:
   - !include models/mini-tv.yaml
