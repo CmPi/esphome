@@ -12,7 +12,7 @@ substitutions:
   host16: 230
   room: salon
   detected_flash_size: 16MB
-  config_version: "1.2.006"
+  config_version: "1.2.100"
   enable_sendspin: "true"  # Set to "false" to disable sendspin entirely  
 
 packages:
