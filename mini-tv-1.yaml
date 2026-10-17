@@ -47,4 +47,4 @@ packages:
 # IO21 - TXD
 
 logger:
-  level: verbose
+  level: info
