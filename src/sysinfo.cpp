@@ -5,6 +5,7 @@
  */
 
 #include "sysinfo.h"
+#include <inttypes.h>
 
 
 static uint32_t map_jedec_capacity(uint8_t manufacturer, uint8_t memory_type, uint8_t capacity) {
@@ -61,7 +62,7 @@ float SysInfoComponent::get_jdec_flash_size_mb() {
             flash_size = 4 << 20;
         }
 
-        ESP_LOGD("sysinfo", "JEDEC ID: %02X %02X %02X, flash size: %u bytes",
+        ESP_LOGD("sysinfo", "JEDEC ID: %02X %02X %02X, flash size: %" PRIu32  " bytes",
                  manufacturer, memory_type, capacity, flash_size);
     }
 #endif
@@ -105,7 +106,7 @@ uint32_t SysInfoComponent::get_flash_chip_speed() {
     speed = 40;  // ESP32 typically runs flash at 40MHz
   #endif
   
-  ESP_LOGD("sysinfo", "Flash speed: %u MHz", speed);
+  ESP_LOGD("sysinfo", "Flash speed: %" PRIu32 " MHz", speed);
   return speed;
 }
 
@@ -151,8 +152,9 @@ std::string SysInfoComponent::get_chip_model() {
     esp_chip_info_t chip_info;
     esp_chip_info(&chip_info);
 
-    ESP_LOGD("sysinfo", "Runtime Chip Model ID: %u, Features: %u", chip_info.model, chip_info.features);
-    
+    ESP_LOGD("sysinfo", "Runtime Chip Model ID: %u, Features: %" PRIu32,
+         (unsigned) chip_info.model, chip_info.features);
+
     switch(chip_info.model) {
 
       // ESP32

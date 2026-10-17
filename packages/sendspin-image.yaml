@@ -1,0 +1,31 @@
+#
+# @file packages/sendspin-image.yaml
+# @brief Sendspin artwork displayer package
+# @author CmPi <github.com/CmPi>
+# @date creation 2026-10-17
+#
+
+
+# Enable the Sendspin client hub
+sendspin:
+
+globals:
+  - id: music_playing
+    type: bool
+    initial_value: 'false'
+
+# Set up the image handler to grab album art and resize it to your 128x128 screen
+image:
+  - platform: sendspin
+    id: album_slot
+    format: JPEG
+    type: RGB565
+    resize: "128x128"
+    current_image:
+      id: album_art
+    on_image_display:
+      - lambda: |-
+          // Mark that music is playing and update last interaction time
+          id(music_playing) = true;
+          id(last_interaction) = millis();    
+      - component.update: d_main

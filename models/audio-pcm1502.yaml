@@ -30,7 +30,7 @@ packages:
   - !include ../packages/api-ota.yaml    
   - !include ../packages/led-rgb-ws2812.yaml  
   - !include ../packages/min-info.yaml
-  - !include ../packages/no-webe.yaml  
+  - !include ../packages/webe.yaml  
 
 psram:
   mode: octal

@@ -3,6 +3,7 @@
 # @brief Device configuration for Mini TV
 # @author CmPi <github.com/CmPi>
 # @date creation 2026-01-02
+# @date update 2026-10-17 added sendspin support
 #
 
 substitutions:
@@ -12,7 +13,7 @@ substitutions:
   pwr_mode: LIGHT
   pwr_val: 20dB
   detected_flash_size: 4MB
-  config_version: "0.2.006"
+  config_version: "1.2.006"
   # display
   bw_only: false
   bl_supported: 'false'
@@ -49,6 +50,7 @@ packages:
   - !include ../packages/display.menu.yaml
   - !include ../packages/display.date-time.yaml
   - !include ../packages/weather.yaml
+  - !include ../packages/sendspin-image.yaml
   - !include ../packages/bermuda.yaml # for bluetooth scanning (safe for an ESP32-C3)
   - !include ../packages/webe.yaml
 
@@ -77,8 +79,8 @@ display:
     dimensions:
       height: 128
       width: 128
-      offset_width: 2 
-      offset_height: 3
+    # offset_width: 2 
+    # offset_height: 3
     color_order: bgr
     invert_colors: false
     cs_pin: GPIO2
