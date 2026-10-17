@@ -17,6 +17,8 @@ substitutions:
   # display
   bw_only: false
   bl_supported: 'true'
+  real_width: '0'
+  real_height: '0'    
   # pages and menus
   bs_select_gpio: GPIO00
   bs_next_gpio: GPIO35

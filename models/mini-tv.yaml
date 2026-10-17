@@ -12,11 +12,13 @@ substitutions:
   ip_0: 192.168.0.${host16}   
   pwr_mode: LIGHT
   pwr_val: 20dB
-  detected_flash_size: 4MB
+  # detected_flash_size: 4MB
   config_version: "1.2.006"
   # display
   bw_only: false
   bl_supported: 'false'
+  real_width: '128'
+  real_height: '128'  
   # pages and menus
   bs_select_gpio: GPIO09
   bs_next_gpio: GPIO10
@@ -37,6 +39,13 @@ esphome:
   includes:
     - src/met.cpp
     - src/met.h
+
+image:
+  - platform: file
+    file: images/pulse-128x128.png
+    id: default_screensaver_img
+    type: RGB565
+    resize: "128x128"
 
 packages:
   - !include ../packages/esphome.dio.yaml
@@ -75,19 +84,17 @@ display:
   - id: d_main
     platform: mipi_spi
     model: ST7735
-    rotation: 180
+    rotation: 0
     dimensions:
-      height: 128
       width: 128
-    # offset_width: 2 
-    # offset_height: 3
+      height: 160
     color_order: bgr
     invert_colors: false
     cs_pin: GPIO2
     dc_pin: GPIO0
     reset_pin: GPIO5
     spi_id: spi_bus
-    data_rate: 40MHz
+    data_rate: 10MHz
     update_interval: 1s
 
 # --- INTERVAL FOR BLINKING ---
@@ -113,6 +120,9 @@ binary_sensor:
       inverted: true
 
 # Enable logging
+
+mdns:
+  disabled: false
 
 logger:
   <<: !include ../keys/logger.debug.yaml   

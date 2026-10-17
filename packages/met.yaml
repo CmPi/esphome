@@ -1,4 +1,7 @@
-
+#
+# @file met.yaml
+# @author CmPi <github.com/CmPi>
+#
 
 
 
@@ -107,9 +110,9 @@ sensor:
 display:
   - id: !extend d_main
     lambda: |-
-      met.init( it, false, id(esp_time) );
+      met.init( it, false, id(esp_time), id(real_width), id(real_height) );
       if (id(g_ota_pb)>=0) {
-        drawProgressPage( it, id(f_small_16), "OTA Update...", id(g_ota_pb) );
+        met.drawProgressPage( it, id(f_small_16), "OTA Update...", id(g_ota_pb) );
         return;
       }    
       const char* titles[6] = { "Home", "Living Room", "Desk / Homelab", "Kitchen", "Main bedroom", "About..." };
@@ -117,13 +120,13 @@ display:
 
       if (id(g_page) == 0) {
           // Draw time and date using DSEG fonts
-          drawTimeAndDate(it, id(f_time), id(f_date), id(esp_time));
+          met.drawTimeAndDate(it, id(f_time), id(f_date), id(esp_time));
           
           // Draw weather icon(s) and moon phase (day: centered, night: split left/right)
-          drawWeatherAndMoon(it, id(font_weather), id(f_micro_8), id(ha_weather_condition), id(moon_phase_icon), id(esp_time));
+          met.drawWeatherAndMoon(it, id(font_weather), id(f_micro_8), id(ha_weather_condition), id(moon_phase_icon), id(esp_time));
 
           // Draw weather information boxes
-          drawBottomBoxes( it,  
+          met.drawBottomBoxes( it,  
                            id(f_mini_12),  
                            id(f_icons), 
                            isnan(id(ha_weather_temperature).state) ? 0 : id(ha_weather_temperature).state, 
@@ -136,7 +139,7 @@ display:
 
       if (id(g_page)==1) { // living room
         met.drawOptionsPage( it, id(f_small_16), id(g_option), id(st_p1_o1), id(st_p1_o2), id(st_p1_o3) );
-        drawBottomBoxes( it,  
+        met.drawBottomBoxes( it,  
                            id(f_mini_12),  
                            id(f_icons), 
                            isnan(id(tx3_lr_t).state) ? 0 : id(tx3_lr_t).state, 
@@ -145,7 +148,7 @@ display:
       
       if (id(g_page)==2) { // desk
         met.drawOptionsPage( it, id(f_small_16), id(g_option), id(st_p2_o1), id(st_p2_o2) );
-          drawBottomBoxes( it,  
+          met.drawBottomBoxes( it,  
                            id(f_mini_12),  
                            id(f_icons), 
                            37.9, 
@@ -156,7 +159,7 @@ display:
       
       if (id(g_page)==3) { // kitchen
         met.drawOptionsPage( it, id(f_small_16), id(g_option), id(st_p3_o1), id(st_p3_o2) );
-          drawBottomBoxes( it,  
+          met.drawBottomBoxes( it,  
                            id(f_mini_12),  
                            id(f_icons), 
                            isnan(id(tx3_k_t).state) ? 0 : id(tx3_k_t).state, 
@@ -165,7 +168,7 @@ display:
                            );
       }
       if (id(g_page)==4) { // bedroom
-          drawBottomBoxes( it,  
+          met.drawBottomBoxes( it,  
                            id(f_small_16),  
                            id(f_icons), 
                            isnan(id(tx3_br_t).state) ? 0 : id(tx3_br_t).state, 
@@ -174,7 +177,7 @@ display:
                            );
       }
       if (id(g_page)==5) {
-        menuDrawAboutPage(it,id(f_mini_12),false);
+        met.menuDrawAboutPage(it,id(f_mini_12),false);
       }
       }
 

@@ -1,11 +1,13 @@
-#pragma once
+/**
+ *  @file met.h
+ *  @brief package handling display and menu functions for MET display
+ *  @author CmPi <github.com/CmPi>
+ */
+
+ #pragma once
 
 #include "esphome.h"
 
-
-// /config/esphome/src/met.h
-
-// ... existing code ...
 
 #include "driver/gpio.h" // <<< IMPORTANT: Include the necessary ESP-IDF GPIO header
 
@@ -26,61 +28,6 @@ enum TextAlignment {
     ALIGN_RIGHT
 };
 
-void drawDsegText(
-        esphome::display::Display& display,
-        int x1,
-        int x2,
-        int y1,
-        int y2,
-        esphome::font::Font *pFont,
-        const std::string& text,
-        esphome::Color color = esphome::Color(255, 255, 255),
-        TextAlignment alignment = ALIGN_CENTER
-);
-
-
-void drawBottomBoxes(  
-        esphome::display::Display &it, 
-        esphome::font::Font *pFontValue, 
-        esphome::font::Font *pFontWeather, 
-        float fTemperature, 
-        float fHumidity = 0.0, 
-        float fPression = 0.0 );                   
-
-void menuDrawAboutPage(
-    esphome::display::Display &it,
-    esphome::font::Font *pFont,
-    bool bMonoChrome = false
-);
-
-void drawProgressPage( 
-        esphome::display::Display &it,
-        esphome::font::Font *pFont,
-        const std::string& sText,
-        float fValue = 0.0,
-        bool bMonoChrome = false
- );
-
-// Draw time and date using DSEG fonts. Positions match existing layout (y ranges used in lambdas).
-// Pass the time component for current time.
-void drawTimeAndDate(
-    esphome::display::Display &it,
-    esphome::font::Font *pFontTime,
-    esphome::font::Font *pFontDate,
-    esphome::time::RealTimeClock *pTime
-);
-
-// Draw weather icon(s) and moon phase.
-// Day: a single weather symbol centered. Night: weather and moon symbols placed in the left/right halves.
-void drawWeatherAndMoon(
-    esphome::display::Display &it,
-    esphome::font::Font *pFontWeather,
-    esphome::font::Font *pFontMicro,
-    esphome::text_sensor::TextSensor *pWeatherCondition,
-    esphome::text_sensor::TextSensor *pMoonPhaseIcon,
-    esphome::time::RealTimeClock *pTime
-);
-
 // Small helper class for UI utilities. Methods are deliberately small
 // so you can call them from lambdas like `met.drawOptions(...)`.
 class cMet {
@@ -98,6 +45,62 @@ public:
     void init(
         esphome::display::Display &it, 
         bool bMono,
+        esphome::time::RealTimeClock *pTime,
+        int realWidth,
+        int realHeight
+    );
+
+    void drawDsegText(
+        esphome::display::Display& display,
+        int x1,
+        int x2,
+        int y1,
+        int y2,
+        esphome::font::Font *pFont,
+        const std::string& text,
+        esphome::Color color = esphome::Color(255, 255, 255),
+        TextAlignment alignment = ALIGN_CENTER
+    );
+
+    void drawBottomBoxes(  
+        esphome::display::Display &it, 
+        esphome::font::Font *pFontValue, 
+        esphome::font::Font *pFontWeather, 
+        float fTemperature, 
+        float fHumidity = 0.0, 
+        float fPression = 0.0 );                   
+
+    void menuDrawAboutPage(
+        esphome::display::Display &it,
+        esphome::font::Font *pFont,
+        bool bMonoChrome = false
+    );
+
+    void drawProgressPage( 
+        esphome::display::Display &it,
+        esphome::font::Font *pFont,
+        const std::string& sText,
+        float fValue = 0.0,
+        bool bMonoChrome = false
+    );
+
+    // Draw time and date using DSEG fonts. Positions match existing layout (y ranges used in lambdas).
+    // Pass the time component for current time.
+    void drawTimeAndDate(
+        esphome::display::Display &it,
+        esphome::font::Font *pFontTime,
+        esphome::font::Font *pFontDate,
+        esphome::time::RealTimeClock *pTime
+    );
+
+    // Draw weather icon(s) and moon phase.
+    // Day: a single weather symbol centered. Night: weather and moon symbols placed in the left/right halves.
+    void drawWeatherAndMoon(
+        esphome::display::Display &it,
+        esphome::font::Font *pFontWeather,
+        esphome::font::Font *pFontMicro,
+        esphome::text_sensor::TextSensor *pWeatherCondition,
+        esphome::text_sensor::TextSensor *pMoonPhaseIcon,
         esphome::time::RealTimeClock *pTime
     );
 

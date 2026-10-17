@@ -19,6 +19,8 @@ substitutions:
   # display
   bw_only: true
   bl_supported: false
+  real_width: '0'
+  real_height: '0'    
   config_version: "0.4.004"
 
 packages:

@@ -1,5 +1,5 @@
 /**
- *  @file sysinfo.cpp
+ *  @file met.cpp
  *  @brief package handling display and menu functions for MET display
  *  @author CmPi <github.com/CmPi>
  */
@@ -31,22 +31,20 @@ void backlight_on_for_ota(bool on) {
     // runs outside the main ESPHome framework context.
 }
 
+    void cMet::init(
+        esphome::display::Display &it, 
+        bool bMono,
+        esphome::time::RealTimeClock *pTime,
+        int realWidth,
+        int realHeight
+    ) {
+        this->bMono = bMono;
+        this->pTime = pTime;
+        this->iScreenWidth = realWidth>0 ? realWidth : it.get_width();
+        this->iScreenHeight = realHeight>0 ? realHeight : it.get_height();
+    }
 
-
-/**
- * Draw text with DSEG font with LED-style background placeholders
- * 
- * @param display Display object (it)
- * @param x1 Left boundary
- * @param x2 Right boundary
- * @param y1 Top boundary
- * @param y2 Bottom boundary
- * @param font DSEG font to use
- * @param text Text to display
- * @param color Text color (default: white)
- * @param alignment Text alignment (default: center)
- */
-void drawDsegText(
+void cMet::drawDsegText(
         esphome::display::Display& display,
         int x1,
         int x2,
@@ -57,18 +55,24 @@ void drawDsegText(
         esphome::Color color,
         TextAlignment alignment
 ) {
+    // Fall back to the logical width stored by init() when bounds are not given
+    if (x2 <= x1) {
+        x1 = 0;
+        x2 = iScreenWidth > 0 ? iScreenWidth - 1 : display.get_width() - 1;
+    }
+
     // Calculate dimensions
     int width = x2 - x1;
     int height = y2 - y1;
     int center_y = y1 + (height / 2);
-    
+
     // Measure text width
     int text_width, text_x_offset, text_baseline, text_height;
-    display.get_text_bounds(0, 0, text.c_str(), pFont, 
+    display.get_text_bounds(0, 0, text.c_str(), pFont,
                            display::TextAlign::TOP_LEFT,
-                           &text_x_offset, &text_baseline, 
+                           &text_x_offset, &text_baseline,
                            &text_width, &text_height);
-    
+
     // Create placeholder string (same length as text)
     std::string placeholder;
     for (size_t i = 0; i < text.length(); i++) {
@@ -78,11 +82,11 @@ void drawDsegText(
             placeholder += DSEG_PLACEHOLDER;  // Replace digits with placeholder
         }
     }
-    
+
     // Calculate x position based on alignment
     int text_x;
     display::TextAlign text_align;
-    
+
     switch (alignment) {
         case ALIGN_LEFT:
             text_x = x1;
@@ -98,19 +102,50 @@ void drawDsegText(
             text_align = display::TextAlign::CENTER;
             break;
     }
-    
+
     // Draw dark placeholder background (all segments)
     Color placeholder_color = Color(40, 40, 40);  // Dark gray for unlit segments
     display.print(text_x, center_y, pFont, placeholder_color, text_align, placeholder.c_str());
-    
+
     // Draw actual text on top in chosen color
     display.print(text_x, center_y, pFont, color, text_align, text.c_str());
 }
 
+
+
+
+void cMet::drawPageTitle(esphome::display::Display &it, esphome::font::Font *pFont,
+                   const std::string &sText, bool bSelected, bool bTime) {
+    it.fill(Color(0x0));
+    iPageTop = 1 + pFont->get_height();
+
+    // Determine color based on selection
+    esphome::Color col = bSelected ? esphome::Color(0x00FF00) : esphome::Color::WHITE;
+
+    const int iXOffset = 1;
+    const int iYOffset = 1;
+
+    // Draw the title text
+    it.print( 3, 1, pFont, col, sText.c_str());
+
+    // Draw underline (1 pixel height)
+    it.line(0, iPageTop-1, iScreenWidth - 1, iPageTop-1, col);
+
+    if (bTime) {
+        auto now = pTime->now();
+        if (now.is_valid()) {
+            std::string time_str = now.strftime("%H:%M");
+            drawDsegText( it, 2, iScreenWidth-2, 1, 15, pFont, time_str.c_str(), Color(0xff7f00), ALIGN_RIGHT);
+        }
+    }
+    
+}
+
+
 /**
  * Convenience wrapper for time display (HH:MM:SS format)
  */
-void draw_dseg_time(
+void cMet::draw_dseg_time(
     display::Display& display,
     int x1,
     int x2,
@@ -125,7 +160,7 @@ void draw_dseg_time(
 ) {
     char time_str[9];
     snprintf(time_str, sizeof(time_str), "%02d:%02d:%02d", hours, minutes, seconds);
-    drawDsegText(display, x1, x2, y1, y2, pFont, time_str, color, alignment);
+    met.drawDsegText(display, x1, x2, y1, y2, pFont, time_str, color, alignment);
 }
 
 /**
@@ -145,7 +180,7 @@ void draw_dseg_time_hhmm(
 ) {
     char time_str[6];
     snprintf(time_str, sizeof(time_str), "%02d:%02d", hours, minutes);
-    drawDsegText(display, x1, x2, y1, y2, pFont, time_str, color, alignment);
+    met.drawDsegText(display, x1, x2, y1, y2, pFont, time_str, color, alignment);
 }
 
 
@@ -156,7 +191,7 @@ void draw_dseg_time_hhmm(
  * Calculate the width needed for an icon + text box
  * If iconFont is nullptr, only calculates text width (no icon)
  */
-inline int calcIconTextBoxWidth(
+inline int cMet::calcIconTextBoxWidth(
     esphome::display::Display &it,
     const char *icon,
     const char *text,
@@ -189,7 +224,7 @@ inline int calcIconTextBoxWidth(
  * Draw icon (left) and text (right) within a box area with vertical centering
  * Content is always centered horizontally within the box
  */
-inline void drawIconTextContent(
+inline void cMet::drawIconTextContent(
     esphome::display::Display &it,
     int boxX,
     int boxY,
@@ -274,7 +309,7 @@ inline void drawIconTextContent(
  * @param fHumidity Humidity percentage (shown if > 0)
  * @param fPression Pressure in hPa/mbar (shown if > 0)
  */
-void drawBottomBoxes(
+void cMet::drawBottomBoxes(
     esphome::display::Display &it,
     esphome::font::Font *pFontValue,
     esphome::font::Font *pFontWeather,
@@ -395,7 +430,7 @@ void drawBottomBoxes(
 }
 
 
-void menuDrawHomePage(
+void cMet::menuDrawHomePage(
     esphome::display::Display &it
 ) {
 
@@ -411,7 +446,7 @@ void menuDrawHomePage(
  * @param bMonoChrome If true, use white only; if false, use colors
  */
 
-void menuDrawAboutPage(
+void cMet::menuDrawAboutPage(
     esphome::display::Display &it,
     esphome::font::Font *pFont,
     bool bMonoChrome
@@ -601,7 +636,7 @@ void menuDrawAboutPage(
 
 }
 
-void drawTimeAndDate(
+void cMet::drawTimeAndDate(
     esphome::display::Display &it,
     esphome::font::Font *pFontTime,
     esphome::font::Font *pFontDate,
@@ -627,8 +662,8 @@ void drawTimeAndDate(
             date_str = now.strftime("%d/%m/%Y");
         }
     }
-    drawDsegText(it, 0, iScreenWidth - 1, time_y1, time_y2, pFontTime, time_str, Color(0xff7f00));
-    drawDsegText(it, 0, iScreenWidth - 1, date_y1, date_y2, pFontDate, date_str, Color(0xff7f00));
+    met.drawDsegText(it, 0, iScreenWidth - 1, time_y1, time_y2, pFontTime, time_str, Color(0xff7f00));
+    met.drawDsegText(it, 0, iScreenWidth - 1, date_y1, date_y2, pFontDate, date_str, Color(0xff7f00));
 }
 
 /**
@@ -647,7 +682,7 @@ void drawTimeAndDate(
  * 
  */
 
-void drawWeatherAndMoon(
+void cMet::drawWeatherAndMoon(
     esphome::display::Display &it,
     esphome::font::Font *pFontWeather,
     esphome::font::Font *pFontMicro,
@@ -827,14 +862,14 @@ void drawWeatherAndMoon(
     }
 }
 
-void drawProgressPage( 
+void cMet::drawProgressPage( 
         esphome::display::Display &it,
         esphome::font::Font *pFont,
         const std::string& sText,
         float fValue,
         bool bMonoChrome
  ) {
-    met.drawPageTitle(it,pFont,sText,true);
+    drawPageTitle(it,pFont,sText,true);
 
     //
     int iScreenWidth = it.get_width();
@@ -855,52 +890,6 @@ void drawProgressPage(
     
     // Draw percentage text
     it.printf(iScreenWidth/2, 100, pFont, Color(0xFFFFFF), esphome::display::TextAlign::CENTER, "%.0f%%", fValue);
-}
-
-// ---------------- cMet implementation ----------------
-
-
-    void cMet::init(
-        esphome::display::Display &it, 
-        bool bMono,
-        esphome::time::RealTimeClock *pTime
-    ) {
-        this->bMono = bMono;
-        this->pTime = pTime;
-
-    }
-
-
-void cMet::drawPageTitle(esphome::display::Display &it, esphome::font::Font *pFont,
-                   const std::string &sText, bool bSelected, bool bTime) {
-    it.fill(Color(0x0));
-    
-
-    // init some page members
-    iScreenWidth = it.get_width();
-    iScreenHeight = it.get_height();
-    iPageTop = 1 + pFont->get_height();
-    
-    // Determine color based on selection
-    esphome::Color col = bSelected ? esphome::Color(0x00FF00) : esphome::Color::WHITE;
-
-    const int iXOffset = 1;
-    const int iYOffset = 1;
-
-    // Draw the title text
-    it.print( 3, 1, pFont, col, sText.c_str());
-
-    // Draw underline (1 pixel height)
-    it.line(0, iPageTop-1, iScreenWidth - 1, iPageTop-1, col);
-
-    if (bTime) {
-        auto now = pTime->now();
-        if (now.is_valid()) {
-            std::string time_str = now.strftime("%H:%M");
-            drawDsegText( it, 2, iScreenWidth-2, 1, 15, pFont, time_str.c_str(), Color(0xff7f00), ALIGN_RIGHT);
-        }
-    }
-    
 }
 
 
