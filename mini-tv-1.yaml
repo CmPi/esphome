@@ -11,6 +11,8 @@ substitutions:
   device_lc: "5b6ca0"
   host16: 230
   room: salon
+  detected_flash_size: 4MB
+  config_version: "1.2.006"
   enable_sendspin: "false"  # Set to "false" to disable sendspin entirely  
 
 packages:
