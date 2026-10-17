@@ -45,6 +45,3 @@ packages:
 # IO19 - USB
 # IO20 - RXD
 # IO21 - TXD
-
-logger:
-  level: info
