@@ -10,6 +10,7 @@ substitutions:
   device_lc: "5b6ca0"
   host16: 230
   room: salon
+  enable_sendspin: "true"  # Set to "false" to disable sendspin entirely  
 
 packages:
   - !include models/mini-tv.yaml
